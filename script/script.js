@@ -1,14 +1,12 @@
 new Swiper(".swiper-images", {
   direction: "horizontal",
-  loop: true,
-  effect: "cards",
-  slidesPerView: 1.2,
-  spaceBetween: 4,
+  effect: "coverflow",
+  slidesPerView: 1.1,
+  spaceBetween: 10,
 });
 
 swiper = new Swiper(".swiper-services", {
   direction: "horizontal",
-  loop: true,
   slidesPerView: 1.2,
   spaceBetween: 8,
   breakpoints: {
@@ -30,7 +28,6 @@ swiper = new Swiper(".swiper-services", {
 
 swiper = new Swiper(".swiper", {
   direction: "horizontal",
-  loop: true,
   slidesPerView: 2.4,
   spaceBetween: 2,
   breakpoints: {

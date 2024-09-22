@@ -677,6 +677,16 @@ video {
   margin-right: auto;
 }
 
+.my-12{
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+
+.my-6{
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
 .mt-24{
   margin-top: 6rem;
 }
@@ -791,6 +801,10 @@ video {
 
 .h-32{
   height: 8rem;
+}
+
+.h-\[22rem\]{
+  height: 22rem;
 }
 
 .min-h-\[51rem\]{
@@ -1003,6 +1017,10 @@ video {
 
 .rounded-3xl{
   border-radius: 1.5rem;
+}
+
+.rounded{
+  border-radius: 0.25rem;
 }
 
 .bg-background{
@@ -1488,6 +1506,18 @@ video {
     width: 66.666667%;
   }
 
+  .xl\:w-56{
+    width: 14rem;
+  }
+
+  .xl\:w-48{
+    width: 12rem;
+  }
+
+  .xl\:grid-cols-2{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .xl\:flex-row{
     flex-direction: row;
   }
@@ -1518,6 +1548,11 @@ video {
   .xl\:py-4{
     padding-top: 1rem;
     padding-bottom: 1rem;
+  }
+
+  .xl\:px-0{
+    padding-left: 0px;
+    padding-right: 0px;
   }
 
   .xl\:pl-32{
