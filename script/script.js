@@ -29,7 +29,7 @@ swiper = new Swiper(".swiper-services", {
 swiper = new Swiper(".swiper", {
   direction: "horizontal",
   slidesPerView: 2.4,
-  spaceBetween: 2,
+  spaceBetween: 4,
   breakpoints: {
     // when window width is >= 640px
     480: {
