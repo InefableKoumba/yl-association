@@ -35,6 +35,7 @@ export default buildConfig({
   db: sqliteAdapter({
     client: {
       url: process.env.DATABASE_URI || '',
+      authToken: process.env.DATABASE_AUTH_TOKEN || '',
     },
   }),
   sharp,

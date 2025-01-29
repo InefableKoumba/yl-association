@@ -1,73 +1,35 @@
 import Image from 'next/image'
 import React from 'react'
-import { Facebook, GraduationCap, Mail } from 'lucide-react'
+import {
+  CalendarDays,
+  ChevronLeft,
+  ChevronRight,
+  Facebook,
+  GraduationCap,
+  Mail,
+  UsersRound,
+} from 'lucide-react'
 import TrainingsList from '@/components/training-list'
+import Link from 'next/link'
 
 export default function Page() {
   return (
     <div>
       <header>
-        <nav className="flex justify-between items-center py-1 bg-white px-4 xl:px-32">
-          <div className="w-72">
-            <Image
-              height={20}
-              width={40}
-              className="w-10 md:w-16"
-              src="/logo.png"
-              alt="Logo Young Leaders"
-            />
-          </div>
-          <div className="hidden xl:flex font-extrabold w-full gap-8 items-center justify-center text-gray-700 text-sm">
-            <a href="/" className="hover:text-primary">
-              Accueil
-            </a>
-            <a href="/" className="hover:text-primary">
-              A propos
-            </a>
-            <a href="/" className="hover:text-primary">
-              Formations
-            </a>
-            <a href="/" className="hover:text-primary">
-              Programmes
-            </a>
-          </div>
-          <div className="flex gap-4 items-center w-72">
-            <div className="flex justify-center gap-2 items-center">
-              <div className="border flex justify-center items-center rounded-full w-12 h-12">
-                <Mail />
-              </div>
-              <div className="border flex justify-center items-center rounded-full w-12 h-12">
-                <Facebook />
-              </div>
-            </div>
-            <a
-              href="#contact-us"
-              className="hidden text-nowrap xl:block bg-background text-sm px-4 xl:px-6 py-3 xl:py-4 rounded-full text-white font-medium"
-            >
-              Nous contacter
-            </a>
-            <button className="xl:hidden grid grid-cols-2 gap-1">
-              <div className="w-2.5 md:w-3.5 h-2.5 md:h-3.5 bg-gray-200 rounded-sm"></div>
-              <div className="w-2.5 md:w-3.5 h-2.5 md:h-3.5 bg-gray-200 rounded-sm"></div>
-              <div className="w-2.5 md:w-3.5 h-2.5 md:h-3.5 bg-gray-200 rounded-sm"></div>
-              <div className="w-2.5 md:w-3.5 h-2.5 md:h-3.5 bg-gray-200 rounded-sm"></div>
-            </button>
-          </div>
-        </nav>
-        <div className="relative min-h-[40rem] md:min-h-[51rem] xl:min-h-[50rem]">
+        <div className="relative h-[40rem]">
           <div className="absolute left-0 top-0 w-full h-full -z-10">
             <div className="absolute left-0 top-0 w-full h-full bg-black from-black bg-opacity-60 z-10"></div>
-            <Image fill className="object-cover" src="/hero2.jpg" alt="Young Leaders" />
+            <Image fill className="object-top object-cover" src="/hero2.jpg" alt="Young Leaders" />
           </div>
           <div className="flex flex-col xl:flex-row items-center min-h-[40rem] md:min-h-[51rem] xl:min-h-[50rem] h-full px-4 xl:px-32">
             <div className="flex xl:w-[80%]">
               <div className="flex flex-col gap-4">
-                <h2 className="font-extrabold uppercase text-white text-7xl leading-[5rem] text-center xl:text-left">
-                  LE CAPITAL HUMAIN EST NOTRE préoccupation
+                <h2 className="font-extrabold text-white text-7xl leading-[5rem] text-center xl:text-left">
+                  Le capital humain est notre priorité
                 </h2>
                 <p className="text-gray-100 text-xl w-[80%] text-center xl:text-left">
                   Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
-                  Ipsum has been the industry's standard dummy text ever since the 1500s.
+                  Ipsum has been the industry&apos;s standard dummy text ever since the 1500s.
                 </p>
                 <div className="flex justify-center xl:justify-start">
                   <a
@@ -82,9 +44,27 @@ export default function Page() {
           </div>
         </div>
       </header>
-      <section className="xl:px-32 bg-[#043D9C] py-20 md:py-32">
-        <h2 className="px-4 text-white text-3xl md:text-5xl font-extrabold">Nos formations</h2>
-        <p className="px-4 text-gray-200 xl:w-2/3 mt-4">
+      <div className="grid grid-cols-4 gap-4 w-2/3 py-24 mx-auto text-sm">
+        <div className="h-44 border flex flex-col justify-center items-center gap-4">
+          <UsersRound color="#333" />
+          425 personnes formées
+        </div>
+        <div className="h-44 border flex flex-col justify-center items-center gap-4">
+          <CalendarDays color="#333" />
+          25 événements organisés
+        </div>
+        <div className="h-44 border flex flex-col justify-center items-center gap-4">
+          <GraduationCap color="#333" />
+          45 formations disponibles
+        </div>
+        <div className="h-44 border flex flex-col justify-center items-center gap-4">
+          <CalendarDays color="#333" />
+          45 formations disponibles
+        </div>
+      </div>
+      <section className="xl:px-32">
+        <h2 className="px-4 text-3xl md:text-5xl text-gray-800 font-extrabold">Nos formations</h2>
+        <p className="px-4 xl:w-2/3 mt-4">
           Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
           been the industry's standard dummy text ever since the 1500s.
         </p>
@@ -92,15 +72,10 @@ export default function Page() {
           <TrainingsList />
         </div>
       </section>
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-12 bg-[#F0F0F0]">
+      <section className="mt-24 grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-12 bg-primary">
         <div className="flex flex-col gap-4 px-4 md:px-8 xl:pl-32 py-12 md:py-24">
-          <h2 className="text-black font-extrabold text-3xl md:text-5xl">A propos de nous</h2>
-          <p className="text-gray-900">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.. Nullam sit amet justo nec
-            risus gravida vehicula. Phasellus sit amet diam sed arcu. Fusce ut nunc in ipsum.
-            Vivamus eget justo eu nisl dignissim vehicula sit ametnecsapien.Nullam.
-          </p>
-          <p className="text-gray-900">
+          <h2 className="text-white font-extrabold text-3xl md:text-5xl">A propos de nous</h2>
+          <p className="text-gray-100">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit.. Nullam sit amet justo nec
             risus gravida vehicula. Phasellus sit amet diam sed arcu. Fusce ut nunc in ipsum.
             Vivamus eget justo eu nisl dignissim vehicula sit ametnecsapien.Nullam.
@@ -114,8 +89,33 @@ export default function Page() {
             </a>
           </div>
         </div>
-        <div className="relative w-full h-full">
-          <Image fill className="h-full w-full object-cover" src="/hero2.jpg" alt="Illustration" />
+        <div className="flex overflow-hidden">
+          <div className="relative">
+            <div className="absolute border border-primary group hover:bg-primary rounded-full left-4 top-1/2 z-10 w-10 h-10 flex justify-center items-center">
+              <ChevronLeft
+                size={24}
+                strokeWidth={1.2}
+                className="text-primary group-hover:text-white"
+              />
+            </div>
+          </div>
+          <div className="relative w-full h-full">
+            <Image
+              fill
+              className="h-full w-full object-cover"
+              src="/hero2.jpg"
+              alt="Illustration"
+            />
+          </div>
+          <div className="relative">
+            <div className="absolute border border-primary group hover:bg-primary rounded-full right-4 top-1/2 z-10 w-10 h-10 flex justify-center items-center">
+              <ChevronRight
+                size={24}
+                strokeWidth={1.2}
+                className="text-primary group-hover:text-white"
+              />
+            </div>
+          </div>
         </div>
       </section>
       <section>
@@ -243,8 +243,8 @@ export default function Page() {
               Nous contacter
             </button>
           </div>
-          <div>
-            <img src="./images/hero.jpg" className="rounded-3xl object-cover" alt="" />
+          <div className="relative">
+            <Image src="/images/hero.jpg" fill className="rounded-3xl object-cover" alt="" />
           </div>
         </div>
       </div>
