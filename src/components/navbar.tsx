@@ -8,7 +8,7 @@ import React from 'react'
 export default function Navbar() {
   const pathname = usePathname()
   return (
-    <nav className="flex fixed w-full left-0 top-0 justify-between items-center py-1 bg-white px-4 xl:px-32">
+    <nav className="flex fixed border-b w-full left-0 top-0 justify-between items-center py-1 bg-white px-4 xl:px-32">
       <div className="w-72">
         <Image
           height={20}
@@ -26,19 +26,19 @@ export default function Navbar() {
           Accueil
         </Link>
         <Link
-          href="/"
+          href="/a-propos"
           className={`hover:text-primary ${pathname === '/a-propos' ? 'text-primary font-semibold' : ''}`}
         >
           A propos
         </Link>
         <Link
-          href="/"
+          href="/formations"
           className={`hover:text-primary ${pathname === '/formations' ? 'text-primary font-semibold' : ''}`}
         >
           Formations
         </Link>
         <Link
-          href="/"
+          href="/programmes"
           className={`hover:text-primary ${pathname === '/programmes' ? 'text-primary font-semibold' : ''}`}
         >
           Programmes
@@ -55,7 +55,7 @@ export default function Navbar() {
         </div>
         <a
           href="#contact-us"
-          className="hidden text-nowrap xl:flex gap-2 items-center bg-background text-sm px-4 xl:px-6 py-3 xl:py-4 rounded-full text-white font-medium"
+          className="hidden text-nowrap xl:flex gap-2 items-center bg-background hover:bg-background/90 text-sm px-4 xl:px-6 py-2 xl:py-3.5 rounded-full text-white font-medium"
         >
           <Phone color="#fff" strokeWidth={1.2} size={20} /> Nous contacter
         </a>

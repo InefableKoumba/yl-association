@@ -1,16 +1,7 @@
 import Image from 'next/image'
 import React from 'react'
-import {
-  CalendarDays,
-  ChevronLeft,
-  ChevronRight,
-  Facebook,
-  GraduationCap,
-  Mail,
-  UsersRound,
-} from 'lucide-react'
+import { CalendarDays, ChevronLeft, ChevronRight, GraduationCap, UsersRound } from 'lucide-react'
 import TrainingsList from '@/components/training-list'
-import Link from 'next/link'
 
 export default function Page() {
   return (
@@ -21,20 +12,20 @@ export default function Page() {
             <div className="absolute left-0 top-0 w-full h-full bg-black from-black bg-opacity-60 z-10"></div>
             <Image fill className="object-top object-cover" src="/hero2.jpg" alt="Young Leaders" />
           </div>
-          <div className="flex flex-col xl:flex-row items-center min-h-[40rem] md:min-h-[51rem] xl:min-h-[50rem] h-full px-4 xl:px-32">
-            <div className="flex xl:w-[80%]">
+          <div className="flex flex-col xl:flex-row items-center h-full px-4 xl:px-32">
+            <div className="flex xl:w-[50rem]">
               <div className="flex flex-col gap-4">
-                <h2 className="font-extrabold text-white text-7xl leading-[5rem] text-center xl:text-left">
+                <h2 className="font-extrabold text-white text-6xl leading-[5rem] text-center xl:text-left">
                   Le capital humain est notre priorité
                 </h2>
-                <p className="text-gray-100 text-xl w-[80%] text-center xl:text-left">
+                <p className="text-gray-100 text-lg w-[80%] text-center xl:text-left">
                   Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
                   Ipsum has been the industry&apos;s standard dummy text ever since the 1500s.
                 </p>
                 <div className="flex justify-center xl:justify-start">
                   <a
                     href="#contact-us"
-                    className="bg-background text-sm px-12 md:px-12 py-6 rounded-full text-white font-medium"
+                    className="bg-background text-sm px-12 md:px-12 py-4 rounded text-white font-medium"
                   >
                     Nous contacter
                   </a>
@@ -44,29 +35,29 @@ export default function Page() {
           </div>
         </div>
       </header>
-      <div className="grid grid-cols-4 gap-4 w-2/3 py-24 mx-auto text-sm">
-        <div className="h-44 border flex flex-col justify-center items-center gap-4">
+      <div className="grid grid-cols-4 gap-4 px-32 py-24 mx-auto text-sm">
+        <div className="h-44 border flex flex-col rounded justify-center items-center gap-4">
           <UsersRound color="#333" />
           425 personnes formées
         </div>
-        <div className="h-44 border flex flex-col justify-center items-center gap-4">
+        <div className="h-44 border flex flex-col rounded justify-center items-center gap-4">
           <CalendarDays color="#333" />
           25 événements organisés
         </div>
-        <div className="h-44 border flex flex-col justify-center items-center gap-4">
+        <div className="h-44 border flex flex-col rounded justify-center items-center gap-4">
           <GraduationCap color="#333" />
           45 formations disponibles
         </div>
-        <div className="h-44 border flex flex-col justify-center items-center gap-4">
+        <div className="h-44 border flex flex-col rounded justify-center items-center gap-4">
           <CalendarDays color="#333" />
           45 formations disponibles
         </div>
       </div>
       <section className="xl:px-32">
-        <h2 className="px-4 text-3xl md:text-5xl text-gray-800 font-extrabold">Nos formations</h2>
-        <p className="px-4 xl:w-2/3 mt-4">
+        <h2 className="text-3xl md:text-5xl text-gray-800 font-extrabold">Nos formations</h2>
+        <p className="xl:w-2/3 mt-4">
           Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has
-          been the industry's standard dummy text ever since the 1500s.
+          been the industry&apos;s standard dummy text ever since the 1500s.
         </p>
         <div className="mt-12">
           <TrainingsList />
@@ -83,7 +74,7 @@ export default function Page() {
           <div className="flex">
             <a
               href="#contact-us"
-              className="bg-background text-sm px-4 xl:px-6 py-3 xl:py-4 rounded-full text-white font-medium"
+              className="bg-background text-sm px-4 xl:px-6 py-3 xl:py-4 rounded text-white font-medium"
             >
               Nous contacter
             </a>
@@ -161,19 +152,39 @@ export default function Page() {
             Ipsum has
           </p>
         </div>
-        <div className="grid grid-cols-4 mt-4 gap-4 px-24">
-          <div className="w-auto h-44 rounded bg-[#3AA6D1]"></div>
-          <div className="w-auto h-44 rounded bg-[#3AA6D1]"></div>
-          <div className="w-auto h-44 rounded bg-[#3AA6D1]"></div>
-          <div className="w-auto h-44 rounded bg-[#3AA6D1]"></div>
+        <div className="flex items-center px-32 mt-12">
+          <div className="relative flex justify-center items-center">
+            <div className="absolute border border-primary group hover:bg-primary rounded-full left-4 z-10 w-10 h-10 flex justify-center items-center">
+              <ChevronLeft
+                size={24}
+                strokeWidth={1.2}
+                className="text-primary group-hover:text-white"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-4 px-24 w-full">
+            <div className="w-auto h-44 rounded bg-[#3AA6D1]"></div>
+            <div className="w-auto h-44 rounded bg-[#3AA6D1]"></div>
+            <div className="w-auto h-44 rounded bg-[#3AA6D1]"></div>
+            <div className="w-auto h-44 rounded bg-[#3AA6D1]"></div>
+          </div>
+          <div className="relative flex justify-center items-center">
+            <div className="absolute border border-primary group hover:bg-primary rounded-full right-4 z-10 w-10 h-10 flex justify-center items-center">
+              <ChevronRight
+                size={24}
+                strokeWidth={1.2}
+                className="text-primary group-hover:text-white"
+              />
+            </div>
+          </div>
         </div>
       </section>
-      <section className="px-4 md:px-8 xl:px-32 py-12 bg-[#f0f0f0]">
+      <section className="px-4 md:px-8 mt-24 xl:px-32 py-24 bg-[#f0f0f0]">
         <div className="flex flex-col gap-4">
           <h2 className="text-black font-extrabold text-3xl md:text-5xl">FAQs</h2>
           <p className="text-gray-900 md:w-2/3">
             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-            has been the industry's standard dummy text ever since the 1500s.
+            has been the industry&apos;s standard dummy text ever since the 1500s.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-24 gap-y-8 mt-12">
@@ -217,10 +228,10 @@ export default function Page() {
       </section>
       <div className="px-4 md:px-8 xl:px-32 py-12">
         <div className="md:w-2/3 mx-auto text-center flex flex-col gap-4">
-          <h2 className="text-black font-bold text-3xl md:text-4xl">Nous contacter</h2>
+          <h2 className="text-gray-800 font-extrabold text-3xl md:text-5xl">Nous contacter</h2>
           <p className="text-gray-900">
             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-            has been the industry's standard.
+            has been the industry&apos;s standard.
           </p>
         </div>
         <div className="mt-12 grid grid-cols-1 xl:grid-cols-2 gap-4">
@@ -253,18 +264,18 @@ export default function Page() {
           <h2 className="text-black font-bold text-3xl md:text-4xl">Join our newsletter</h2>
           <p className="text-gray-900">
             Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum
-            has been the industry's standard dummy text ever since the 1500s.
+            has been the industry&apos;s standard dummy text ever since the 1500s.
           </p>
         </div>
         <div className="mt-6 md:mt-12">
-          <div className="relative md:w-1/3 flex gap-4">
+          <div className="relative md:w-[30rem] flex gap-2">
             <input
               className="bg-[#f0f0f0] p-4 rounded-full w-full h-full"
               placeholder="Votre adresse email"
               type="text"
             />
-            <button className="bg-[#0039F0] text-white font-medium rounded-full p-3">
-              S'abonner
+            <button className="bg-[#0039F0] text-white font-medium rounded-full py-3 px-6">
+              S&apos;abonner
             </button>
           </div>
         </div>
