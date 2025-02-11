@@ -13,6 +13,11 @@ export const TrainingDomains: CollectionConfig = {
       type: 'text',
     },
     {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+    },
+    {
       name: 'trainings',
       label: 'Liste des formations de ce domaine',
       type: 'array',

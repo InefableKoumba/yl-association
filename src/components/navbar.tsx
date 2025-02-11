@@ -8,15 +8,17 @@ import React from 'react'
 export default function Navbar() {
   const pathname = usePathname()
   return (
-    <nav className="flex fixed border-b w-full left-0 top-0 justify-between items-center py-1 bg-white px-4 xl:px-32">
+    <div className="flex fixed z-50 border-b w-full left-0 top-0 justify-between items-center py-1 bg-white px-4 xl:px-32">
       <div className="w-72">
-        <Image
-          height={20}
-          width={40}
-          className="w-10 md:w-16"
-          src="/logo.png"
-          alt="Logo Young Leaders"
-        />
+        <Link href={'/'}>
+          <Image
+            height={20}
+            width={40}
+            className="w-10 md:w-16"
+            src="/logo.png"
+            alt="Logo Young Leaders"
+          />
+        </Link>
       </div>
       <div className="hidden xl:flex font-medium w-full gap-8 items-center justify-center text-gray-700 text-base">
         <Link
@@ -66,6 +68,6 @@ export default function Navbar() {
           <div className="w-2.5 md:w-3.5 h-2.5 md:h-3.5 bg-gray-200 rounded-sm"></div>
         </button>
       </div>
-    </nav>
+    </div>
   )
 }

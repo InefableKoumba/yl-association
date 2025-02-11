@@ -1,6 +1,5 @@
 // storage-adapter-import-placeholder
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
-import { payloadCloudPlugin } from '@payloadcms/payload-cloud'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 
 import { fr } from '@payloadcms/translations/languages/fr'
@@ -12,6 +11,11 @@ import sharp from 'sharp'
 import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { TrainingDomains } from './collections/TrainingDomains'
+import { s3Storage } from '@payloadcms/storage-s3'
+import { Pages } from './globals/Page'
+import { Partners } from './collections/Partner'
+import { FAQ } from './collections/FAQ'
+import { Programs } from './collections/Program'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -26,7 +30,8 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { fr },
   },
-  collections: [Users, Media, TrainingDomains],
+  collections: [Users, Media, TrainingDomains, Partners, FAQ, Programs],
+  globals: [Pages],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {
@@ -40,7 +45,19 @@ export default buildConfig({
   }),
   sharp,
   plugins: [
-    payloadCloudPlugin(),
-    // storage-adapter-placeholder
+    s3Storage({
+      collections: {
+        media: true,
+      },
+      bucket: process.env.S3_BUCKET!,
+      config: {
+        credentials: {
+          accessKeyId: process.env.S3_ACCESS_KEY_ID!,
+          secretAccessKey: process.env.S3_SECRET_ACCESS_KEY!,
+        },
+        region: process.env.S3_REGION,
+        endpoint: process.env.S3_ENDPOINT,
+      },
+    }),
   ],
 })
