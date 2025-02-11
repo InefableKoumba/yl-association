@@ -8,6 +8,8 @@ export const metadata: Metadata = {
     'Young Leaders est une association qui accompagne les jeunes dans leur développement personnel et professionnel.',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default function RootLayout({
   children,
 }: Readonly<{
