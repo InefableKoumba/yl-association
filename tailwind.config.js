@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+const config = {
   content: [
     './app/**/*.{js,ts,jsx,tsx,mdx}',
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -17,7 +17,17 @@ export default {
         textBlack: '#1A1A1A',
         textGray: '#333',
       },
+      animation: {
+        'subtle-zoom': 'subtle-zoom 20s ease-in-out infinite alternate',
+      },
+      keyframes: {
+        'subtle-zoom': {
+          '0%': { transform: 'scale(1.02)' },
+          '100%': { transform: 'scale(1.08)' },
+        },
+      },
     },
   },
   plugins: [],
 }
+export default config
