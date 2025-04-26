@@ -12,10 +12,19 @@ import { Users } from './collections/Users'
 import { Media } from './collections/Media'
 import { TrainingDomains } from './collections/TrainingDomains'
 import { s3Storage } from '@payloadcms/storage-s3'
-import { Pages } from './globals/Page'
 import { Partners } from './collections/Partner'
 import { FAQ } from './collections/FAQ'
 import { Programs } from './collections/Program'
+import { Events } from './collections/Events'
+import {
+  HomeConfig,
+  AboutConfig,
+  TrainingsConfig,
+  ContactConfig,
+  FaqConfig,
+  ProgramsConfig,
+  EventsConfig,
+} from './globals/pages'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -30,8 +39,16 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { fr },
   },
-  collections: [Users, Media, TrainingDomains, Partners, FAQ, Programs],
-  globals: [Pages],
+  collections: [Users, Media, TrainingDomains, Partners, FAQ, Programs, Events],
+  globals: [
+    HomeConfig,
+    AboutConfig,
+    TrainingsConfig,
+    ContactConfig,
+    FaqConfig,
+    ProgramsConfig,
+    EventsConfig,
+  ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
   typescript: {

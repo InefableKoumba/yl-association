@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './global.css'
 import Navbar from '@/components/navbar'
+import Footer from '@/components/footer'
 
 export const metadata: Metadata = {
   title: 'Young Leaders | Site officiel',
@@ -20,6 +21,7 @@ export default function RootLayout({
       <body className="bg-gray-50">
         <Navbar />
         <div className="pt-24 md:pt-28">{children}</div>
+        <Footer />
       </body>
     </html>
   )

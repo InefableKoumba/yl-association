@@ -44,21 +44,30 @@ export default function Navbar() {
   const navLinks = [
     { href: '/', label: 'Accueil' },
     { href: '/a-propos', label: 'À propos' },
-    { href: '/formations', label: 'Formations' },
+    { href: '/domaine-de-formation', label: 'Formations' },
     { href: '/evenements', label: 'Événements' },
-    { href: '/contact', label: 'Contact' },
   ]
 
   return (
     <header
-      className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-2' : 'bg-white/95 py-4'}`}
+      className={`fixed w-full z-50 transition-all duration-300 bg-white  ${scrolled ? 'shadow-md' : undefined}`}
     >
+      <div
+        className={`bg-[#0039F0] transition-all duration-300 text-white py-2 px-4 text-center text-sm font-medium ${
+          scrolled ? 'py-2' : 'py-4'
+        }`}
+      >
+        Soutenez notre mission en faisant un don aujourd&apos;hui !
+        <Link href="/faire-un-don" className="ml-2 underline hover:text-white/90 transition-colors">
+          Faire un don &rarr;
+        </Link>
+      </div>
       <div className="max-w-7xl mx-auto px-4 md:px-8 xl:px-10 flex justify-between items-center">
         {/* Logo */}
         <div className="flex-shrink-0">
           <Link href="/" className="flex items-center">
             <Image
-              height={20}
+              height={18}
               width={40}
               className="w-12 md:w-16 transition-transform hover:scale-105"
               src="/logo.png"

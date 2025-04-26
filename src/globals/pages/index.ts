@@ -1,0 +1,7 @@
+export { HomeConfig } from './home-config'
+export { AboutConfig } from './about-config'
+export { TrainingsConfig } from './trainings-config'
+export { ContactConfig } from './contact-config'
+export { FaqConfig } from './faq-config'
+export { ProgramsConfig } from './programs-config'
+export { EventsConfig } from './events-config'

@@ -3,62 +3,164 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import React from 'react'
 import { RichText } from '@payloadcms/richtext-lexical/react'
+import { AboutPage } from '@/payload-types'
+import Link from 'next/link'
+import { Users, Info, Target } from 'lucide-react'
 
-export default async function Page() {
+export default async function AboutUsPage() {
   try {
     const payload = await getPayload({ config })
     const pageGlobal = await payload.findGlobal({
-      slug: 'pages',
+      slug: 'aboutPage',
     })
 
     return (
-      <div>
+      <div className="min-h-screen">
+        {/* Hero Section */}
         <header>
-          <div className="relative h-[40rem]">
+          <div className="relative h-[32rem] md:h-[40rem]">
             <div className="absolute left-0 top-0 w-full h-full -z-10">
-              <div className="absolute left-0 top-0 w-full h-full bg-black from-black bg-opacity-60 z-10"></div>
+              <div className="absolute left-0 top-0 w-full h-full bg-gradient-to-b from-black/80 via-black/60 to-black/40 backdrop-blur-[2px] z-10"></div>
               <Image
                 fill
-                className="object-top object-cover"
+                className="object-center object-cover"
                 src={
-                  pageGlobal.about?.heroImage &&
-                  typeof pageGlobal.about?.heroImage !== 'number' &&
-                  pageGlobal.about?.heroImage.url
-                    ? pageGlobal.about?.heroImage.url
+                  pageGlobal?.heroImage &&
+                  typeof pageGlobal?.heroImage !== 'number' &&
+                  pageGlobal?.heroImage.url
+                    ? pageGlobal?.heroImage.url
                     : '/hero2.jpg'
                 }
-                alt="Young Leaders"
+                alt="Young Leaders - À Propos"
+                priority
+                quality={90}
               />
             </div>
-            <div className="flex flex-col xl:flex-row items-center h-full px-4 xl:px-32">
-              <div className="flex xl:w-[50rem]">
-                <div className="flex flex-col gap-4">
-                  <h2 className="font-extrabold text-white text-6xl leading-[5rem] text-center xl:text-left">
-                    {pageGlobal.about?.heroTitle}
-                  </h2>
-                  <p className="text-gray-100 text-lg w-[80%] text-center xl:text-left">
-                    {pageGlobal.about?.heroDescription}
-                  </p>
-                  <div className="flex justify-center xl:justify-start">
-                    <a
-                      href="#contact-us"
-                      className="bg-background text-sm px-12 md:px-12 py-4 rounded text-white font-medium"
-                    >
-                      {pageGlobal.about?.heroButtonText}
-                    </a>
-                  </div>
+            <div className="container mx-auto h-full flex flex-col justify-center px-4 xl:px-32">
+              <div className="max-w-3xl">
+                <div className="inline-flex items-center bg-[#0039F0]/10 px-4 py-2 rounded-full mb-6 backdrop-blur-sm">
+                  <Info className="text-white mr-2" size={20} />
+                  <span className="text-white font-semibold">Notre Histoire</span>
+                </div>
+                <h1 className="font-extrabold text-white text-4xl md:text-6xl leading-tight mb-6">
+                  {pageGlobal?.heroTitle || 'Découvrez Young Leaders'}
+                </h1>
+                <p className="text-gray-100 text-lg md:text-xl mb-8 md:w-5/6">
+                  {pageGlobal?.heroDescription ||
+                    'Nous sommes une association dédiée à former et accompagner la prochaine génération de leaders.'}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <a
+                    href="#about-content"
+                    className="bg-[#0039F0] hover:bg-[#0030cc] transition-colors duration-300 text-white font-semibold py-3 px-8 rounded-full shadow-lg text-center"
+                  >
+                    {pageGlobal?.heroButtonText || 'En savoir plus'}
+                  </a>
+                  <Link
+                    href="/contact"
+                    className="bg-transparent border-2 border-white hover:bg-white/10 transition-colors duration-300 text-white font-semibold py-3 px-8 rounded-full text-center"
+                  >
+                    Nous contacter
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         </header>
-        <section className="p-32">
-          <h2 className="text-gray-800 font-extrabold text-3xl md:text-5xl mb-12">
-            {pageGlobal.about?.aboutUsSectionTitle}
-          </h2>
-          <RichText data={pageGlobal.about?.aboutUsSectionDescription as any} />
+
+        {/* About Content Section */}
+        <section id="about-content" className="container mx-auto px-4 xl:px-32 py-16 md:py-24">
+          <div className="mb-16">
+            <div className="inline-flex items-center bg-[#0039F0]/10 px-4 py-2 rounded-full mb-6">
+              <Target className="text-[#0039F0] mr-2" size={20} />
+              <span className="text-[#0039F0] font-semibold">Notre Mission</span>
+            </div>
+            <h2 className="text-3xl md:text-5xl text-gray-800 font-extrabold mb-8">
+              {pageGlobal?.aboutUsSectionTitle || 'À propos de Young Leaders'}
+            </h2>
+
+            <div className="prose prose-lg max-w-none text-gray-700">
+              {pageGlobal?.aboutUsSectionDescription ? (
+                <RichText data={pageGlobal.aboutUsSectionDescription} />
+              ) : (
+                <p>
+                  Young Leaders est une association dédiée au développement de compétences en
+                  leadership chez les jeunes talents. Nous croyons fermement que chaque jeune a le
+                  potentiel de devenir un leader dans son domaine, et notre mission est de fournir
+                  les ressources, la formation et le soutien nécessaires pour réaliser ce potentiel.
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Gallery Section (if available) */}
+          {pageGlobal?.aboutUsGallerySectionImages &&
+            pageGlobal.aboutUsGallerySectionImages.length > 0 && (
+              <div className="mt-16">
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">
+                  {pageGlobal.aboutUsGallerySectionTitle || 'Notre galerie photos'}
+                </h3>
+
+                {pageGlobal.aboutUsGallerySectionDescription && (
+                  <p className="text-gray-600 mb-8 max-w-3xl">
+                    {pageGlobal.aboutUsGallerySectionDescription}
+                  </p>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {pageGlobal.aboutUsGallerySectionImages.map(
+                    (item, index) =>
+                      item.image &&
+                      typeof item.image !== 'number' &&
+                      item.image.url && (
+                        <div
+                          key={index}
+                          className="relative h-64 rounded-lg overflow-hidden shadow-md"
+                        >
+                          <Image
+                            src={item.image.url}
+                            alt={`Image ${index + 1}`}
+                            fill
+                            className="object-cover transition-transform hover:scale-105 duration-500"
+                          />
+                        </div>
+                      ),
+                  )}
+                </div>
+              </div>
+            )}
+
+          {/* CTA Section */}
+          <div className="mt-20 bg-gray-100 rounded-xl p-8 md:p-12 text-center">
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+              Rejoignez-nous dans notre mission
+            </h3>
+            <p className="text-gray-600 max-w-2xl mx-auto mb-8">
+              Vous souhaitez en savoir plus sur nos activités ou vous impliquer dans notre
+              association ? Contactez-nous dès aujourd&apos;hui.
+            </p>
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center bg-[#0039F0] hover:bg-[#0030cc] transition-colors duration-300 text-white font-semibold py-3 px-8 rounded-full"
+            >
+              Contactez-nous
+            </Link>
+          </div>
         </section>
       </div>
     )
-  } catch (error) {}
+  } catch (error) {
+    console.error('Error loading about page:', error)
+    return (
+      <div className="container mx-auto px-4 py-12 text-center">
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">Une erreur est survenue</h1>
+        <p className="text-gray-600 mb-6">
+          Nous n&apos;avons pas pu charger la page À propos. Veuillez réessayer plus tard.
+        </p>
+        <Link href="/" className="text-[#0039F0] hover:underline">
+          Retour à l&apos;accueil
+        </Link>
+      </div>
+    )
+  }
 }

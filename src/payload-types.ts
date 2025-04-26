@@ -17,6 +17,7 @@ export interface Config {
     partners: Partner;
     faq: Faq;
     programs: Program;
+    events: Event;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
@@ -29,6 +30,7 @@ export interface Config {
     partners: PartnersSelect<false> | PartnersSelect<true>;
     faq: FaqSelect<false> | FaqSelect<true>;
     programs: ProgramsSelect<false> | ProgramsSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
@@ -37,10 +39,22 @@ export interface Config {
     defaultIDType: number;
   };
   globals: {
-    pages: Page;
+    homePage: HomePage;
+    aboutPage: AboutPage;
+    trainingsPage: TrainingsPage;
+    contactPage: ContactPage;
+    faqPage: FaqPage;
+    programsPage: ProgramsPage;
+    eventsPage: EventsPage;
   };
   globalsSelect: {
-    pages: PagesSelect<false> | PagesSelect<true>;
+    homePage: HomePageSelect<false> | HomePageSelect<true>;
+    aboutPage: AboutPageSelect<false> | AboutPageSelect<true>;
+    trainingsPage: TrainingsPageSelect<false> | TrainingsPageSelect<true>;
+    contactPage: ContactPageSelect<false> | ContactPageSelect<true>;
+    faqPage: FaqPageSelect<false> | FaqPageSelect<true>;
+    programsPage: ProgramsPageSelect<false> | ProgramsPageSelect<true>;
+    eventsPage: EventsPageSelect<false> | EventsPageSelect<true>;
   };
   locale: null;
   user: User & {
@@ -191,6 +205,40 @@ export interface Program {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  title: string;
+  status: 'upcoming' | 'past';
+  date: string;
+  time: string;
+  location: string;
+  image?: (number | null) | Media;
+  shortDescription: string;
+  longDescription?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  registrationLink?: string | null;
+  isRegistrationAvailable?: boolean | null;
+  maximumParticipants?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
@@ -219,6 +267,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'programs';
         value: number | Program;
+      } | null)
+    | ({
+        relationTo: 'events';
+        value: number | Event;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -349,6 +401,25 @@ export interface ProgramsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  title?: T;
+  status?: T;
+  date?: T;
+  time?: T;
+  location?: T;
+  image?: T;
+  shortDescription?: T;
+  longDescription?: T;
+  registrationLink?: T;
+  isRegistrationAvailable?: T;
+  maximumParticipants?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-locked-documents_select".
  */
 export interface PayloadLockedDocumentsSelect<T extends boolean = true> {
@@ -381,11 +452,14 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pages".
+ * via the `definition` "homePage".
  */
-export interface Page {
+export interface HomePage {
   id: number;
-  home?: {
+  heroSection?: {
+    /**
+     * Ajoutez jusqu'à 3 images pour le slider de la section héro
+     */
     heroImages?:
       | {
           heroImage?: (number | null) | Media;
@@ -393,35 +467,44 @@ export interface Page {
         }[]
       | null;
     heroTitle?: string | null;
+    heroSubtitle?: string | null;
     heroDescription?: string | null;
-    aboutUsSectionTitle?: string | null;
-    aboutUsSectionDescription?: string | null;
-    aboutUsSectionButtonText?: string | null;
-    aboutUsSectionImages?:
+    heroPrimaryButtonText?: string | null;
+    heroPrimaryButtonLink?: string | null;
+    heroSecondaryButtonText?: string | null;
+    heroSecondaryButtonLink?: string | null;
+    /**
+     * Statistiques affichées dans la section héro
+     */
+    heroStats?:
       | {
-          heroImage?: (number | null) | Media;
+          value: string;
+          label: string;
+          icon: 'users' | 'graduation' | 'calendar';
           id?: string | null;
         }[]
       | null;
-    ourPartnersSectionTitle?: string | null;
-    ourPartnersSectionDescription?: string | null;
-    ourTrainingsSectionTitle?: string | null;
-    ourTrainingsSectionDescription?: string | null;
-    faqSectionTitle?: string | null;
-    faqSectionDescription?: string | null;
-    contactUsSectionTitle?: string | null;
-    contactUsSectionDescription?: string | null;
-    contactUsSectionImage?: (number | null) | Media;
-    contactUsSectionButtonText?: string | null;
-    newsletterSectionTitle?: string | null;
-    newsletterSectionDescription?: string | null;
   };
-  about?: {
-    heroImage?: (number | null) | Media;
-    heroTitle?: string | null;
-    heroDescription?: string | null;
-    heroButtonText?: string | null;
+  missionVisionSection?: {
+    missionTitle?: string | null;
+    missionHeading?: string | null;
+    missionDescription?: string | null;
+    missionDescription2?: string | null;
+    visionTitle?: string | null;
+    visionHeading?: string | null;
+    visionDescription?: string | null;
+    valuesTitle?: string | null;
+    values?:
+      | {
+          title: string;
+          description: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  aboutUsSection?: {
     aboutUsSectionTitle?: string | null;
+    aboutUsSectionSubtitle?: string | null;
     aboutUsSectionDescription?: {
       root: {
         type: string;
@@ -437,53 +520,197 @@ export interface Page {
       };
       [k: string]: unknown;
     } | null;
-    aboutUsGallerySectionTitle?: string | null;
-    aboutUsGallerySectionDescription?: string | null;
-    aboutUsGallerySectionImages?:
+    aboutUsSectionButtonText?: string | null;
+    aboutUsSectionButtonLink?: string | null;
+    aboutUsSectionImages?:
       | {
           image?: (number | null) | Media;
+          alt?: string | null;
           id?: string | null;
         }[]
       | null;
   };
-  trainings?: {
-    heroImage?: (number | null) | Media;
-    heroTitle?: string | null;
-    heroDescription?: string | null;
-    heroButtonText?: string | null;
-    trainingsSectionTitle?: string | null;
-    trainingsSectionDescription?: string | null;
+  statsSection?: {
+    statsSectionEnabled?: boolean | null;
+    statsSectionTitle?: string | null;
+    statsSectionDescription?: string | null;
+    stats?:
+      | {
+          value: string;
+          label: string;
+          icon?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
   };
-  contact?: {
-    heroImage?: (number | null) | Media;
-    heroTitle?: string | null;
-    heroDescription?: string | null;
+  partnersSection?: {
+    ourPartnersSectionTitle?: string | null;
+    ourPartnersSectionDescription?: string | null;
+    partnersToShow?: (number | Partner)[] | null;
+    showAllPartnersLink?: boolean | null;
+    allPartnersLinkText?: string | null;
   };
-  faq?: {
-    heroImage?: (number | null) | Media;
-    heroTitle?: string | null;
-    heroDescription?: string | null;
-    heroButtonText?: string | null;
+  trainingsSection?: {
+    ourTrainingsSectionTitle?: string | null;
+    ourTrainingsSectionDescription?: string | null;
+    trainingDomainsToFeature?: (number | TrainingDomain)[] | null;
+    trainingsSectionButtonText?: string | null;
+    trainingsSectionButtonLink?: string | null;
+  };
+  testimonialsSection?: {
+    testimonialsSectionEnabled?: boolean | null;
+    testimonialsSectionTitle?: string | null;
+    testimonialsSectionDescription?: string | null;
+    testimonials?:
+      | {
+          name: string;
+          role?: string | null;
+          content: string;
+          photo?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  faqSection?: {
     faqSectionTitle?: string | null;
     faqSectionDescription?: string | null;
+    frequentlyAskedQuestions?: (number | Faq)[] | null;
+    faqSectionButtonText?: string | null;
+    faqSectionButtonLink?: string | null;
   };
-  programs?: {
-    heroImage?: (number | null) | Media;
-    heroTitle?: string | null;
-    heroDescription?: string | null;
-    heroButtonText?: string | null;
-    programsSectionTitle?: string | null;
-    programsSectionDescription?: string | null;
+  contactSection?: {
+    contactUsSectionTitle?: string | null;
+    contactUsSectionDescription?: string | null;
+    contactUsSectionImage?: (number | null) | Media;
+    contactUsSectionButtonText?: string | null;
+    contactUsSectionButtonLink?: string | null;
+  };
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "pages_select".
+ * via the `definition` "aboutPage".
  */
-export interface PagesSelect<T extends boolean = true> {
-  home?:
+export interface AboutPage {
+  id: number;
+  heroImage?: (number | null) | Media;
+  heroTitle?: string | null;
+  heroDescription?: string | null;
+  heroButtonText?: string | null;
+  aboutUsSectionTitle?: string | null;
+  aboutUsSectionDescription?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  aboutUsGallerySectionTitle?: string | null;
+  aboutUsGallerySectionDescription?: string | null;
+  aboutUsGallerySectionImages?:
+    | {
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "trainingsPage".
+ */
+export interface TrainingsPage {
+  id: number;
+  heroImage?: (number | null) | Media;
+  heroTitle?: string | null;
+  heroDescription?: string | null;
+  heroButtonText?: string | null;
+  trainingsSectionTitle?: string | null;
+  trainingsSectionDescription?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contactPage".
+ */
+export interface ContactPage {
+  id: number;
+  heroImage?: (number | null) | Media;
+  heroTitle?: string | null;
+  heroDescription?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqPage".
+ */
+export interface FaqPage {
+  id: number;
+  heroImage?: (number | null) | Media;
+  heroTitle?: string | null;
+  heroDescription?: string | null;
+  heroButtonText?: string | null;
+  faqSectionTitle?: string | null;
+  faqSectionDescription?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "programsPage".
+ */
+export interface ProgramsPage {
+  id: number;
+  heroImage?: (number | null) | Media;
+  heroTitle?: string | null;
+  heroDescription?: string | null;
+  heroButtonText?: string | null;
+  programsSectionTitle?: string | null;
+  programsSectionDescription?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "eventsPage".
+ */
+export interface EventsPage {
+  id: number;
+  heroImage?: (number | null) | Media;
+  heroTitle?: string | null;
+  heroDescription?: string | null;
+  upcomingEventsSectionTitle?: string | null;
+  pastEventsSectionTitle?: string | null;
+  ctaSectionTitle?: string | null;
+  ctaSectionDescription?: string | null;
+  proposeEventButtonText?: string | null;
+  becomeSpeakerButtonText?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homePage_select".
+ */
+export interface HomePageSelect<T extends boolean = true> {
+  heroSection?:
     | T
     | {
         heroImages?:
@@ -493,84 +720,228 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         heroTitle?: T;
+        heroSubtitle?: T;
         heroDescription?: T;
+        heroPrimaryButtonText?: T;
+        heroPrimaryButtonLink?: T;
+        heroSecondaryButtonText?: T;
+        heroSecondaryButtonLink?: T;
+        heroStats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              icon?: T;
+              id?: T;
+            };
+      };
+  missionVisionSection?:
+    | T
+    | {
+        missionTitle?: T;
+        missionHeading?: T;
+        missionDescription?: T;
+        missionDescription2?: T;
+        visionTitle?: T;
+        visionHeading?: T;
+        visionDescription?: T;
+        valuesTitle?: T;
+        values?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  aboutUsSection?:
+    | T
+    | {
         aboutUsSectionTitle?: T;
+        aboutUsSectionSubtitle?: T;
         aboutUsSectionDescription?: T;
         aboutUsSectionButtonText?: T;
+        aboutUsSectionButtonLink?: T;
         aboutUsSectionImages?:
           | T
           | {
-              heroImage?: T;
+              image?: T;
+              alt?: T;
               id?: T;
             };
+      };
+  statsSection?:
+    | T
+    | {
+        statsSectionEnabled?: T;
+        statsSectionTitle?: T;
+        statsSectionDescription?: T;
+        stats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              icon?: T;
+              id?: T;
+            };
+      };
+  partnersSection?:
+    | T
+    | {
         ourPartnersSectionTitle?: T;
         ourPartnersSectionDescription?: T;
+        partnersToShow?: T;
+        showAllPartnersLink?: T;
+        allPartnersLinkText?: T;
+      };
+  trainingsSection?:
+    | T
+    | {
         ourTrainingsSectionTitle?: T;
         ourTrainingsSectionDescription?: T;
+        trainingDomainsToFeature?: T;
+        trainingsSectionButtonText?: T;
+        trainingsSectionButtonLink?: T;
+      };
+  testimonialsSection?:
+    | T
+    | {
+        testimonialsSectionEnabled?: T;
+        testimonialsSectionTitle?: T;
+        testimonialsSectionDescription?: T;
+        testimonials?:
+          | T
+          | {
+              name?: T;
+              role?: T;
+              content?: T;
+              photo?: T;
+              id?: T;
+            };
+      };
+  faqSection?:
+    | T
+    | {
         faqSectionTitle?: T;
         faqSectionDescription?: T;
+        frequentlyAskedQuestions?: T;
+        faqSectionButtonText?: T;
+        faqSectionButtonLink?: T;
+      };
+  contactSection?:
+    | T
+    | {
         contactUsSectionTitle?: T;
         contactUsSectionDescription?: T;
         contactUsSectionImage?: T;
         contactUsSectionButtonText?: T;
-        newsletterSectionTitle?: T;
-        newsletterSectionDescription?: T;
+        contactUsSectionButtonLink?: T;
       };
-  about?:
+  seo?:
     | T
     | {
-        heroImage?: T;
-        heroTitle?: T;
-        heroDescription?: T;
-        heroButtonText?: T;
-        aboutUsSectionTitle?: T;
-        aboutUsSectionDescription?: T;
-        aboutUsGallerySectionTitle?: T;
-        aboutUsGallerySectionDescription?: T;
-        aboutUsGallerySectionImages?:
-          | T
-          | {
-              image?: T;
-              id?: T;
-            };
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
       };
-  trainings?:
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "aboutPage_select".
+ */
+export interface AboutPageSelect<T extends boolean = true> {
+  heroImage?: T;
+  heroTitle?: T;
+  heroDescription?: T;
+  heroButtonText?: T;
+  aboutUsSectionTitle?: T;
+  aboutUsSectionDescription?: T;
+  aboutUsGallerySectionTitle?: T;
+  aboutUsGallerySectionDescription?: T;
+  aboutUsGallerySectionImages?:
     | T
     | {
-        heroImage?: T;
-        heroTitle?: T;
-        heroDescription?: T;
-        heroButtonText?: T;
-        trainingsSectionTitle?: T;
-        trainingsSectionDescription?: T;
+        image?: T;
+        id?: T;
       };
-  contact?:
-    | T
-    | {
-        heroImage?: T;
-        heroTitle?: T;
-        heroDescription?: T;
-      };
-  faq?:
-    | T
-    | {
-        heroImage?: T;
-        heroTitle?: T;
-        heroDescription?: T;
-        heroButtonText?: T;
-        faqSectionTitle?: T;
-        faqSectionDescription?: T;
-      };
-  programs?:
-    | T
-    | {
-        heroImage?: T;
-        heroTitle?: T;
-        heroDescription?: T;
-        heroButtonText?: T;
-        programsSectionTitle?: T;
-        programsSectionDescription?: T;
-      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "trainingsPage_select".
+ */
+export interface TrainingsPageSelect<T extends boolean = true> {
+  heroImage?: T;
+  heroTitle?: T;
+  heroDescription?: T;
+  heroButtonText?: T;
+  trainingsSectionTitle?: T;
+  trainingsSectionDescription?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contactPage_select".
+ */
+export interface ContactPageSelect<T extends boolean = true> {
+  heroImage?: T;
+  heroTitle?: T;
+  heroDescription?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faqPage_select".
+ */
+export interface FaqPageSelect<T extends boolean = true> {
+  heroImage?: T;
+  heroTitle?: T;
+  heroDescription?: T;
+  heroButtonText?: T;
+  faqSectionTitle?: T;
+  faqSectionDescription?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "programsPage_select".
+ */
+export interface ProgramsPageSelect<T extends boolean = true> {
+  heroImage?: T;
+  heroTitle?: T;
+  heroDescription?: T;
+  heroButtonText?: T;
+  programsSectionTitle?: T;
+  programsSectionDescription?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "eventsPage_select".
+ */
+export interface EventsPageSelect<T extends boolean = true> {
+  heroImage?: T;
+  heroTitle?: T;
+  heroDescription?: T;
+  upcomingEventsSectionTitle?: T;
+  pastEventsSectionTitle?: T;
+  ctaSectionTitle?: T;
+  ctaSectionDescription?: T;
+  proposeEventButtonText?: T;
+  becomeSpeakerButtonText?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

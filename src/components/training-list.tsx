@@ -68,7 +68,7 @@ export default async function TrainingsList() {
                       <li key={training.id} className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-[#0039F0]"></div>
                         <Link
-                          href={'/domaine-de-formation/formations/' + training.id}
+                          href={`/domaine-de-formation/${trainingDomain.id}/formations/${training.id}`}
                           className="text-gray-600 hover:text-[#0039F0] transition-colors font-medium text-sm"
                         >
                           {training.name}
