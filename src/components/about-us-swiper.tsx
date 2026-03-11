@@ -14,7 +14,7 @@ export default function AboutUsImagesSwiper({ images }: { images: string[] }) {
       {images.map((image, index) => (
         <SwiperSlide key={index}>
           <div className="relative">
-            <Image src={image} alt="Young Leaders" />
+            <Image src={image} alt="Young Leaders" fill />
           </div>
         </SwiperSlide>
       ))}
