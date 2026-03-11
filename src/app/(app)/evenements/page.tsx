@@ -1,4 +1,3 @@
-import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Calendar, Clock, MapPin, Filter, Search } from 'lucide-react'
@@ -44,10 +43,10 @@ export default async function EventsPage() {
         <div className="relative w-full h-[300px] mb-12 rounded-xl overflow-hidden">
           <Image
             src={
-              pageGlobal?.heroImage &&
-              typeof pageGlobal?.heroImage !== 'number' &&
-              pageGlobal?.heroImage.url
-                ? pageGlobal?.heroImage.url
+              pageGlobal?.heroImagePage &&
+                typeof pageGlobal?.heroImagePage !== 'number' &&
+                pageGlobal?.heroImagePage.url
+                ? pageGlobal?.heroImagePage.url
                 : '/hero.jpg'
             }
             alt="Événements Young Leaders Association"

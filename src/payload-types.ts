@@ -793,7 +793,7 @@ export interface ProgramsPage {
  */
 export interface EventsPage {
   id: number;
-  heroImage?: (number | null) | Media;
+  heroImagePage?: (number | null) | Media;
   heroTitle?: string | null;
   heroDescription?: string | null;
   upcomingEventsSectionTitle?: string | null;
@@ -1033,7 +1033,7 @@ export interface ProgramsPageSelect<T extends boolean = true> {
  * via the `definition` "eventsPage_select".
  */
 export interface EventsPageSelect<T extends boolean = true> {
-  heroImage?: T;
+  heroImagePage?: T;
   heroTitle?: T;
   heroDescription?: T;
   upcomingEventsSectionTitle?: T;

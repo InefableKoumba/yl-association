@@ -2,7 +2,7 @@ import type { Field } from 'payload'
 
 export const eventsPageFields: Field[] = [
   {
-    name: 'heroImage',
+    name: 'heroImagePage',
     type: 'upload',
     relationTo: 'media',
     label: "Image d'en-tête",
