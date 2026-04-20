@@ -73,7 +73,6 @@ export interface Config {
     partners: Partner;
     faq: Faq;
     programs: Program;
-    events: Event;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -87,7 +86,6 @@ export interface Config {
     partners: PartnersSelect<false> | PartnersSelect<true>;
     faq: FaqSelect<false> | FaqSelect<true>;
     programs: ProgramsSelect<false> | ProgramsSelect<true>;
-    events: EventsSelect<false> | EventsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -104,7 +102,6 @@ export interface Config {
     contactPage: ContactPage;
     faqPage: FaqPage;
     programsPage: ProgramsPage;
-    eventsPage: EventsPage;
     'site-settings': SiteSetting;
   };
   globalsSelect: {
@@ -114,7 +111,6 @@ export interface Config {
     contactPage: ContactPageSelect<false> | ContactPageSelect<true>;
     faqPage: FaqPageSelect<false> | FaqPageSelect<true>;
     programsPage: ProgramsPageSelect<false> | ProgramsPageSelect<true>;
-    eventsPage: EventsPageSelect<false> | EventsPageSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
   locale: 'en' | 'fr';
@@ -252,33 +248,6 @@ export interface Faq {
  */
 export interface Program {
   id: number;
-  name?: string | null;
-  shortDescription?: string | null;
-  longDescription?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  image?: (number | null) | Media;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "events".
- */
-export interface Event {
-  id: number;
   title: string;
   status: 'upcoming' | 'past';
   date: string;
@@ -354,10 +323,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'programs';
         value: number | Program;
-      } | null)
-    | ({
-        relationTo: 'events';
-        value: number | Event;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -486,18 +451,6 @@ export interface FaqSelect<T extends boolean = true> {
  * via the `definition` "programs_select".
  */
 export interface ProgramsSelect<T extends boolean = true> {
-  name?: T;
-  shortDescription?: T;
-  longDescription?: T;
-  image?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "events_select".
- */
-export interface EventsSelect<T extends boolean = true> {
   title?: T;
   status?: T;
   date?: T;
@@ -783,26 +736,11 @@ export interface ProgramsPage {
   heroImage?: (number | null) | Media;
   heroTitle?: string | null;
   heroDescription?: string | null;
-  heroButtonText?: string | null;
-  programsSectionTitle?: string | null;
-  programsSectionDescription?: string | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "eventsPage".
- */
-export interface EventsPage {
-  id: number;
-  heroImagePage?: (number | null) | Media;
-  heroTitle?: string | null;
-  heroDescription?: string | null;
-  upcomingEventsSectionTitle?: string | null;
-  pastEventsSectionTitle?: string | null;
+  upcomingProgramsSectionTitle?: string | null;
+  pastProgramsSectionTitle?: string | null;
   ctaSectionTitle?: string | null;
   ctaSectionDescription?: string | null;
-  proposeEventButtonText?: string | null;
+  proposeProgramButtonText?: string | null;
   becomeSpeakerButtonText?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -1039,26 +977,11 @@ export interface ProgramsPageSelect<T extends boolean = true> {
   heroImage?: T;
   heroTitle?: T;
   heroDescription?: T;
-  heroButtonText?: T;
-  programsSectionTitle?: T;
-  programsSectionDescription?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "eventsPage_select".
- */
-export interface EventsPageSelect<T extends boolean = true> {
-  heroImagePage?: T;
-  heroTitle?: T;
-  heroDescription?: T;
-  upcomingEventsSectionTitle?: T;
-  pastEventsSectionTitle?: T;
+  upcomingProgramsSectionTitle?: T;
+  pastProgramsSectionTitle?: T;
   ctaSectionTitle?: T;
   ctaSectionDescription?: T;
-  proposeEventButtonText?: T;
+  proposeProgramButtonText?: T;
   becomeSpeakerButtonText?: T;
   updatedAt?: T;
   createdAt?: T;

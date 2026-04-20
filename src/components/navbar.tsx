@@ -64,7 +64,7 @@ export default function Navbar() {
     { href: '/', label: t.nav.home },
     { href: '/a-propos', label: t.nav.about },
     { href: '/domaine-de-formation', label: t.nav.trainings },
-    { href: '/evenements', label: t.nav.events },
+    { href: '/programmes', label: t.nav.programs },
   ]
 
   return (

@@ -8,7 +8,7 @@ import { fr, enUS } from 'date-fns/locale'
 import { getLocale } from '@/lib/i18n'
 import { Locale, translations } from '@/lib/translations'
 
-export default async function EventsPage() {
+export default async function ProgramsPage() {
   const locale = await getLocale() as Locale
   const t = translations[locale]
   const dateLocale = locale === 'fr' ? fr : enUS
@@ -17,13 +17,13 @@ export default async function EventsPage() {
 
     // Fetch the page global settings
     const pageGlobal = await payload.findGlobal({
-      slug: 'eventsPage',
-      locale: locale as any,
+      slug: 'programsPage',
+      locale: locale,
     })
 
-    // Fetch events
-    const { docs: upcomingEvents } = await payload.find({
-      collection: 'events',
+    // Fetch programs
+    const { docs: upcomingPrograms } = await payload.find({
+      collection: 'programs',
       where: {
         status: {
           equals: 'upcoming',
@@ -33,16 +33,16 @@ export default async function EventsPage() {
       locale: locale as any,
     })
 
-    const { docs: pastEvents } = await payload.find({
-      collection: 'events',
+    const { docs: pastPrograms } = await payload.find({
+      collection: 'programs',
       where: {
         status: {
           equals: 'past',
         },
       },
       sort: '-date',
-      limit: 3, // Show only the 3 most recent past events
-      locale: locale as any,
+      limit: 3, // Show only the 3 most recent past programs
+      locale: locale,
     })
 
     return (
@@ -51,22 +51,22 @@ export default async function EventsPage() {
         <div className="relative w-full h-[300px] mb-12 rounded-xl overflow-hidden">
           <Image
             src={
-              pageGlobal?.heroImagePage &&
-                typeof pageGlobal?.heroImagePage !== 'number' &&
-                pageGlobal?.heroImagePage.url
-                ? pageGlobal?.heroImagePage.url
+              pageGlobal?.heroImage &&
+                typeof pageGlobal?.heroImage !== 'number' &&
+                pageGlobal?.heroImage.url
+                ? pageGlobal?.heroImage.url
                 : '/hero.jpg'
             }
-            alt="Événements Young Leaders Association"
+            alt="Programmes Young Leaders Association"
             fill
             className="object-cover"
           />
           <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-center text-white p-6">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center">
-              {pageGlobal?.heroTitle || t.events.heroTitle}
+              {pageGlobal?.heroTitle || t.programs.heroTitle}
             </h1>
             <p className="text-xl md:text-2xl text-center max-w-2xl">
-              {pageGlobal?.heroDescription || t.events.heroDescription}
+              {pageGlobal?.heroDescription || t.programs.heroDescription}
             </p>
           </div>
         </div>
@@ -89,55 +89,55 @@ export default async function EventsPage() {
           </button>
         </div>
 
-        {/* Upcoming Events Section */}
+        {/* Upcoming Programs Section */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold mb-8 border-b pb-2">
-            {pageGlobal?.upcomingEventsSectionTitle || t.common.upcomingEvents}
+            {pageGlobal?.upcomingProgramsSectionTitle || t.common.upcomingPrograms}
           </h2>
-          {upcomingEvents.length > 0 ? (
+          {upcomingPrograms.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {upcomingEvents.map((event) => (
+              {upcomingPrograms.map((program) => (
                 <div
-                  key={event.id}
+                  key={program.id}
                   className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                 >
                   <div className="relative h-48">
                     <Image
                       src={
-                        event.image && typeof event.image !== 'number' && event.image.url
-                          ? event.image.url
+                        program.image && typeof program.image !== 'number' && program.image.url
+                          ? program.image.url
                           : '/images/placeholder-event.jpg'
                       }
-                      alt={event.title}
+                      alt={program.title}
                       fill
                       className="object-cover"
                     />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-bold mb-3">{event.title}</h3>
+                    <h3 className="text-xl font-bold mb-3">{program.title}</h3>
                     <div className="flex items-center gap-2 text-gray-600 mb-2">
                       <Calendar size={16} />
                       <span>
-                        {event.date && format(new Date(event.date), 'dd MMMM yyyy', { locale: dateLocale })}
+                        {program.date && format(new Date(program.date), 'dd MMMM yyyy', { locale: dateLocale })}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600 mb-2">
                       <Clock size={16} />
-                      <span>{event.time}</span>
+                      <span>{program.time}</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600 mb-4">
                       <MapPin size={16} />
-                      <span>{event.location}</span>
+                      <span>{program.location}</span>
                     </div>
-                    <p className="mb-6 text-gray-700">{event.shortDescription}</p>
-                    {event.isRegistrationAvailable ? (
-                      <Link href={event.registrationLink || '/contact'}>
+                    <p className="mb-6 text-gray-700">{program.shortDescription}</p>
+                    {program.isRegistrationAvailable ? (
+                      <Link href={program.registrationLink || '/contact'}>
                         <button className="w-full bg-[#0039F0] hover:bg-[#0030cc] text-white font-medium py-2.5 px-6 rounded-lg transition-colors">
                           {t.common.register}
                         </button>
                       </Link>
                     ) : (
-                      <Link href={`/evenements/${event.id}`}>
+                      <Link href={`/programmes/${program.id}`}>
                         <button className="w-full border border-gray-300 hover:border-[#0039F0] text-gray-700 hover:text-[#0039F0] font-medium py-2.5 px-6 rounded-lg transition-colors">
                           {t.common.viewDetails}
                         </button>
@@ -149,7 +149,7 @@ export default async function EventsPage() {
             </div>
           ) : (
             <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <p className="text-gray-600">{t.common.noUpcomingEvents}</p>
+              <p className="text-gray-600">{t.common.noUpcomingPrograms}</p>
               <p className="mt-2 text-gray-500">
                 {t.common.checkBackSoon}
               </p>
@@ -157,48 +157,48 @@ export default async function EventsPage() {
           )}
         </section>
 
-        {/* Past Events Section */}
+        {/* Past Programs Section */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold mb-8 border-b pb-2">
-            {pageGlobal?.pastEventsSectionTitle || t.common.pastEvents}
+            {pageGlobal?.pastProgramsSectionTitle || t.common.pastPrograms}
           </h2>
-          {pastEvents.length > 0 ? (
+          {pastPrograms.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {pastEvents.map((event) => (
+              {pastPrograms.map((program) => (
                 <div
-                  key={event.id}
+                  key={program.id}
                   className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow opacity-80"
                 >
                   <div className="relative h-48">
                     <Image
                       src={
-                        event.image && typeof event.image !== 'number' && event.image.url
-                          ? event.image.url
+                        program.image && typeof program.image !== 'number' && program.image.url
+                          ? program.image.url
                           : '/images/placeholder-event.jpg'
                       }
-                      alt={event.title}
+                      alt={program.title}
                       fill
                       className="object-cover grayscale"
                     />
                   </div>
                   <div className="p-6">
-                    <h3 className="text-xl font-bold mb-3">{event.title}</h3>
+                    <h3 className="text-xl font-bold mb-3">{program.title}</h3>
                     <div className="flex items-center gap-2 text-gray-600 mb-2">
                       <Calendar size={16} />
                       <span>
-                        {event.date && format(new Date(event.date), 'dd MMMM yyyy', { locale: dateLocale })}
+                        {program.date && format(new Date(program.date), 'dd MMMM yyyy', { locale: dateLocale })}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600 mb-2">
                       <Clock size={16} />
-                      <span>{event.time}</span>
+                      <span>{program.time}</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600 mb-4">
                       <MapPin size={16} />
-                      <span>{event.location}</span>
+                      <span>{program.location}</span>
                     </div>
-                    <p className="mb-6 text-gray-700">{event.shortDescription}</p>
-                    <Link href={`/evenements/${event.id}`}>
+                    <p className="mb-6 text-gray-700">{program.shortDescription}</p>
+                    <Link href={`/programmes/${program.id}`}>
                       <button className="w-full border border-gray-300 hover:border-[#0039F0] text-gray-700 hover:text-[#0039F0] font-medium py-2.5 px-6 rounded-lg transition-colors">
                         {t.common.viewSummary}
                       </button>
@@ -209,7 +209,7 @@ export default async function EventsPage() {
             </div>
           ) : (
             <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <p className="text-gray-600">{t.common.noPastEvents}</p>
+              <p className="text-gray-600">{t.common.noPastPrograms}</p>
             </div>
           )}
         </section>
@@ -227,7 +227,7 @@ export default async function EventsPage() {
               href="/#contact"
               className="text-[#0039F0] transition-all duration-300 hover:bg-[#0039F0] hover:text-white text-sm font-medium border border-[#0039F0] rounded-full px-6 py-3"
             >
-              {pageGlobal?.proposeEventButtonText || t.common.proposeEvent}
+              {pageGlobal?.proposeProgramButtonText || t.common.proposeProgram}
             </Link>
             <Link
               href="/#contact"
@@ -240,12 +240,12 @@ export default async function EventsPage() {
       </div>
     )
   } catch (error) {
-    console.error('Error loading events page:', error)
+    console.error('Error loading programs page:', error)
     return (
       <div className="container mx-auto px-4 py-12 text-center">
         <h1 className="text-2xl font-bold text-gray-800 mb-4">{t.common.errorTitle}</h1>
         <p className="text-gray-600 mb-6">
-          {t.events.errorLoadingEvents} {t.common.tryAgainLater}
+          {t.programs.errorLoadingPrograms} {t.common.tryAgainLater}
         </p>
         <Link href="/" className="text-[#0039F0] hover:underline">
           {t.common.backToHome}

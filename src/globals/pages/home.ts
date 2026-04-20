@@ -129,7 +129,7 @@ export const homePageFields: Field[] = [
           },
           {
             value: '25+',
-            label: 'événements organisés',
+            label: 'programmes organisés',
             icon: 'calendar',
           },
         ],

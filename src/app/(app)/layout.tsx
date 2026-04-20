@@ -10,6 +10,12 @@ export const metadata: Metadata = {
   title: 'Young Leaders | Site officiel',
   description:
     'Young Leaders est une association qui accompagne les jeunes dans leur développement personnel et professionnel.',
+  icons: {
+    icon: '/favicons/favicon.ico',
+    shortcut: '/favicons/favicon-32x32.png',
+    apple: '/favicons/apple-touch-icon.png',
+  },
+  manifest: '/favicons/site.webmanifest',
 }
 
 export const dynamic = 'force-dynamic'

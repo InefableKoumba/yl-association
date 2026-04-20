@@ -1,10 +1,10 @@
 import type { CollectionConfig } from 'payload'
 
-export const Events: CollectionConfig = {
-  slug: 'events',
+export const Programs: CollectionConfig = {
+  slug: 'programs',
   labels: {
-    singular: 'Événement',
-    plural: 'Événements',
+    singular: 'Programme',
+    plural: 'Programmes',
   },
   admin: {
     useAsTitle: 'title',
@@ -13,7 +13,7 @@ export const Events: CollectionConfig = {
   fields: [
     {
       name: 'title',
-      label: "Titre de l'événement",
+      label: 'Titre du programme',
       type: 'text',
       required: true,
       localized: true,

@@ -15,8 +15,7 @@ import { TrainingDomains } from './collections/TrainingDomains'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { Partners } from './collections/Partner'
 import { FAQ } from './collections/FAQ'
-import { Programs } from './collections/Program'
-import { Events } from './collections/Events'
+import { Programs } from './collections/Programs'
 import {
   HomeConfig,
   AboutConfig,
@@ -24,7 +23,6 @@ import {
   ContactConfig,
   FaqConfig,
   ProgramsConfig,
-  EventsConfig,
 } from './globals/pages'
 import { SiteSettings } from './globals/site-settings'
 
@@ -37,6 +35,20 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    meta: {
+      titleSuffix: '- Young Leaders',
+      icons: [
+        {
+          rel: 'icon',
+          type: 'image/x-icon',
+          url: '/favicons/favicon.ico',
+        },
+        {
+          rel: 'apple-touch-icon',
+          url: '/favicons/apple-touch-icon.png',
+        },
+      ],
+    },
   },
   localization: {
     locales: ['en', 'fr'],
@@ -46,7 +58,7 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { fr, en },
   },
-  collections: [Users, Media, TrainingDomains, Partners, FAQ, Programs, Events],
+  collections: [Users, Media, TrainingDomains, Partners, FAQ, Programs],
   globals: [
     HomeConfig,
     AboutConfig,
@@ -54,7 +66,6 @@ export default buildConfig({
     ContactConfig,
     FaqConfig,
     ProgramsConfig,
-    EventsConfig,
     SiteSettings,
   ],
   editor: lexicalEditor(),

@@ -9,7 +9,7 @@ import FAQ from '@/components/FAQ'
 import MissionVision from '@/components/mission-vision'
 import TeamSection from '@/components/team-section'
 import Testimonials from '@/components/testimonials'
-import UpcomingEvents from '@/components/upcoming-events'
+import UpcomingPrograms from '@/components/upcoming-programs'
 import Link from 'next/link'
 import { getLocale, translations } from '@/lib/i18n'
 import ContactForm from '@/components/ContactForm'
@@ -179,7 +179,7 @@ export default async function Page() {
           </div>
         </section>
 
-        <UpcomingEvents locale={locale} />
+        <UpcomingPrograms locale={locale} />
 
         <AboutUsSection aboutUsData={pageGlobal?.aboutUsSection} />
 

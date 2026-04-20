@@ -4,61 +4,14 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { Locale, translations } from '@/lib/translations'
 
-interface Event {
-  id: string
-  title: string
-  date: string
-  time: string
-  location: string
-  description: string
-  image?: string
-  registrationLink: string
-}
-
-const defaultEvents: Event[] = [
-  {
-    id: '1',
-    title: 'Workshop: Leadership Transformationnel',
-    date: '15 Novembre 2023',
-    time: '14:00 - 17:00',
-    location: 'Campus Paris Innovation, Paris',
-    description:
-      'Découvrez les principes du leadership transformationnel et comment les appliquer dans votre contexte professionnel.',
-    image: '/events/event-1.jpg',
-    registrationLink: '#register',
-  },
-  {
-    id: '2',
-    title: 'Conférence: Innovations en Leadership',
-    date: '22 Novembre 2023',
-    time: '18:30 - 20:30',
-    location: 'Espace Coworking Central, Lyon',
-    description:
-      "Une soirée avec des experts internationaux partageant les dernières innovations en matière de leadership et de gestion d'équipe.",
-    image: '/events/event-2.jpg',
-    registrationLink: '#register',
-  },
-  {
-    id: '3',
-    title: 'Formation: Communication Efficace',
-    date: '5 Décembre 2023',
-    time: '09:00 - 17:00',
-    location: 'Centre de Formation Est, Strasbourg',
-    description:
-      'Une journée intensive pour développer vos compétences en communication et prise de parole en public.',
-    image: '/events/event-3.jpg',
-    registrationLink: '#register',
-  },
-]
-
-export default async function UpcomingEvents({ locale }: { locale: Locale }) {
+export default async function UpcomingPrograms({ locale }: { locale: Locale }) {
   const t = translations[locale]
-  let events: any[] = []
+  let programs: any[] = []
 
   try {
     const payload = await getPayload({ config })
-    const eventsData = await payload.find({
-      collection: 'events',
+    const programsData = await payload.find({
+      collection: 'programs',
       locale: locale as any,
       where: {
         date: {
@@ -68,57 +21,57 @@ export default async function UpcomingEvents({ locale }: { locale: Locale }) {
       sort: 'date',
       limit: 3,
     })
-    events = eventsData.docs
+    programs = programsData.docs
   } catch (error) {
-    console.error('Error fetching events:', error)
+    console.error('Error fetching programs:', error)
   }
 
-  if (events.length === 0) return null
+  if (programs.length === 0) return null
 
   return (
     <section className="px-4 md:px-8 xl:px-32 py-24 bg-gray-50">
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-5xl text-gray-800 font-extrabold mb-4">
-          {t.common.upcomingEvents}
+          {t.common.upcomingPrograms}
         </h2>
         <p className="text-gray-600 md:w-2/3 mx-auto">
-          {t.common.upcomingEventsDescription}
+          {t.common.upcomingProgramsDescription}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {events.map((event) => (
+        {programs.map((program) => (
           <div
-            key={event.id}
+            key={program.id}
             className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
           >
-            {event.image && (
+            {program.image && typeof program.image !== 'number' && (
               <div className="relative h-48 w-full">
-                <Image src={event.image} alt={event.title} fill className="object-cover" />
+                <Image src={program.image.url || '/hero.jpg'} alt={program.title} fill className="object-cover" />
               </div>
             )}
             <div className="p-6">
-              <h3 className="font-bold text-xl text-gray-800 mb-3">{event.title}</h3>
+              <h3 className="font-bold text-xl text-gray-800 mb-3">{program.title}</h3>
 
               <div className="flex items-center text-gray-600 mb-2">
                 <Calendar size={16} className="mr-2 text-[#0039F0]" />
-                <span>{event.date}</span>
+                <span>{program.date}</span>
               </div>
 
               <div className="flex items-center text-gray-600 mb-2">
                 <Clock size={16} className="mr-2 text-[#0039F0]" />
-                <span>{event.time}</span>
+                <span>{program.time}</span>
               </div>
 
               <div className="flex items-center text-gray-600 mb-4">
                 <MapPin size={16} className="mr-2 text-[#0039F0]" />
-                <span>{event.location}</span>
+                <span>{program.location}</span>
               </div>
 
-              <p className="text-gray-700 mb-6">{event.description}</p>
+              <p className="text-gray-700 mb-6">{program.shortDescription}</p>
 
               <a
-                href={event.registrationLink || '#'}
+                href={program.registrationLink || '#'}
                 className="block w-full bg-[#0039F0] hover:bg-[#0030cc] transition-colors duration-300 text-white font-medium py-2 px-4 rounded-full text-center"
               >
                 {t.common.register}
@@ -130,10 +83,10 @@ export default async function UpcomingEvents({ locale }: { locale: Locale }) {
 
       <div className="mt-12 text-center">
         <a
-          href="/evenements"
+          href="/programmes"
           className="inline-flex items-center text-[#0039F0] font-medium hover:underline"
         >
-          {t.common.viewAllEvents}
+          {t.common.viewAllPrograms}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5 ml-1"

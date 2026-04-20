@@ -117,10 +117,10 @@ export default function Footer({ socialLinks }: FooterProps) {
               </li>
               <li>
                 <Link
-                  href="/evenements"
+                  href="/programmes"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
-                  {t.nav.events}
+                  {t.nav.programs}
                 </Link>
               </li>
               <li>
