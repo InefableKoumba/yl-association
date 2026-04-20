@@ -3,12 +3,15 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import React from 'react'
 import Image from 'next/image'
+import { getLocale } from '@/lib/i18n'
 
 export default async function PartnersList() {
+  const locale = await getLocale()
   try {
     const payload = await getPayload({ config })
     const partners = await payload.find({
       collection: 'partners',
+      locale: locale as any,
     })
 
     if (partners.docs.length === 0) {

@@ -5,11 +5,14 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { GraduationCap, Clock, Users, ExternalLink } from 'lucide-react'
 
-export default async function TrainingsList() {
+import { Locale } from '@/lib/i18n'
+
+export default async function TrainingsList({ locale }: { locale: Locale }) {
   try {
     const payload = await getPayload({ config })
     const trainingDomains = await payload.find({
       collection: 'trainingDomains',
+      locale: locale as any,
     })
 
     return (
@@ -26,8 +29,8 @@ export default async function TrainingsList() {
                 className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 src={
                   trainingDomain.image &&
-                  typeof trainingDomain.image !== 'number' &&
-                  trainingDomain.image.filename
+                    typeof trainingDomain.image !== 'number' &&
+                    trainingDomain.image.filename
                     ? process.env.NEXT_PUBLIC_CLOUDFLARE_PUB_URL + trainingDomain.image.filename
                     : '/1.jpg'
                 }
@@ -35,7 +38,7 @@ export default async function TrainingsList() {
               />
               <div className="absolute top-4 left-4 z-10">
                 <span className="bg-[#0039F0] text-white text-sm font-medium py-1 px-3 rounded-full">
-                  {trainingDomain.trainings?.length || 0} formations
+                  {trainingDomain.trainings?.length || 0} {locale === 'fr' ? 'formations' : 'trainings'}
                 </span>
               </div>
             </div>
@@ -50,17 +53,17 @@ export default async function TrainingsList() {
               <div className="flex items-center gap-6 text-sm text-gray-500 mt-2 mb-4">
                 <div className="flex items-center gap-1">
                   <Clock size={16} />
-                  <span>2-5 jours</span>
+                  <span>{locale === 'fr' ? '2-5 jours' : '2-5 days'}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Users size={16} />
-                  <span>15 participants max</span>
+                  <span>{locale === 'fr' ? '15 participants max' : '15 participants max'}</span>
                 </div>
               </div>
 
               <div className="border-t border-gray-100 pt-4 mt-2">
                 <h4 className="text-sm font-semibold text-gray-700 mb-3">
-                  Formations disponibles :
+                  {locale === 'fr' ? 'Formations disponibles :' : 'Available trainings :'}
                 </h4>
                 <ul className="space-y-2">
                   {trainingDomain.trainings && trainingDomain.trainings.length > 0 ? (
@@ -76,12 +79,14 @@ export default async function TrainingsList() {
                       </li>
                     ))
                   ) : (
-                    <li className="text-gray-500 text-sm italic">Pas de formations disponibles</li>
+                    <li className="text-gray-500 text-sm italic">
+                      {locale === 'fr' ? 'Pas de formations disponibles' : 'No trainings available'}
+                    </li>
                   )}
 
                   {trainingDomain.trainings && trainingDomain.trainings.length > 3 && (
                     <li className="text-sm text-gray-500 pt-1">
-                      <span>+ {trainingDomain.trainings.length - 3} autres formations</span>
+                      <span>+ {trainingDomain.trainings.length - 3} {locale === 'fr' ? 'autres formations' : 'other trainings'}</span>
                     </li>
                   )}
                 </ul>
@@ -92,7 +97,7 @@ export default async function TrainingsList() {
                   href={`/domaine-de-formation/${trainingDomain.id}`}
                   className="flex items-center justify-center gap-2 w-full py-3 px-4 font-medium bg-gray-50 hover:bg-[#0039F0] text-gray-800 hover:text-white transition-colors duration-300 rounded-lg"
                 >
-                  <span>Découvrir ce domaine</span>
+                  <span>{locale === 'fr' ? 'Découvrir ce domaine' : 'Discover this domain'}</span>
                   <ExternalLink size={16} />
                 </Link>
               </div>

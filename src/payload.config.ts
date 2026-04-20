@@ -3,6 +3,7 @@ import { sqliteAdapter } from '@payloadcms/db-sqlite'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 
 import { fr } from '@payloadcms/translations/languages/fr'
+import { en } from '@payloadcms/translations/languages/en'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -25,6 +26,7 @@ import {
   ProgramsConfig,
   EventsConfig,
 } from './globals/pages'
+import { SiteSettings } from './globals/site-settings'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -36,8 +38,13 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
   },
+  localization: {
+    locales: ['en', 'fr'],
+    defaultLocale: 'fr',
+    fallback: true,
+  },
   i18n: {
-    supportedLanguages: { fr },
+    supportedLanguages: { fr, en },
   },
   collections: [Users, Media, TrainingDomains, Partners, FAQ, Programs, Events],
   globals: [
@@ -48,6 +55,7 @@ export default buildConfig({
     FaqConfig,
     ProgramsConfig,
     EventsConfig,
+    SiteSettings,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',

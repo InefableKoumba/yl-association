@@ -6,17 +6,22 @@ import React from 'react'
 import Link from 'next/link'
 import { GraduationCap, Search } from 'lucide-react'
 import { TrainingsPage } from '@/payload-types'
+import { getLocale, translations } from '@/lib/i18n'
 
 export default async function FormationsPage() {
+  const locale = await getLocale()
+  const t = translations[locale]
   try {
     const payload = await getPayload({ config })
     const pageGlobal = (await payload.findGlobal({
       slug: 'trainingsPage',
+      locale: locale as any,
     })) as TrainingsPage
 
     // Get all training domains to show the total number of trainings
     const trainingDomains = await payload.find({
       collection: 'trainingDomains',
+      locale: locale as any,
     })
 
     // Calculate total number of trainings across all domains
@@ -36,8 +41,8 @@ export default async function FormationsPage() {
                 className="object-center object-cover"
                 src={
                   pageGlobal?.heroImage &&
-                  typeof pageGlobal?.heroImage !== 'number' &&
-                  pageGlobal?.heroImage.url
+                    typeof pageGlobal?.heroImage !== 'number' &&
+                    pageGlobal?.heroImage.url
                     ? pageGlobal?.heroImage.url
                     : '/hero.jpg'
                 }
@@ -50,27 +55,29 @@ export default async function FormationsPage() {
               <div className="max-w-3xl">
                 <div className="inline-flex items-center bg-[#0039F0]/10 px-4 py-2 rounded-full mb-6 backdrop-blur-sm">
                   <GraduationCap className="text-white mr-2" size={20} />
-                  <span className="text-white font-semibold">Nos Formations</span>
+                  <span className="text-white font-semibold">{t.nav.trainings}</span>
                 </div>
                 <h1 className="font-extrabold text-white text-4xl md:text-6xl leading-tight mb-6">
-                  {pageGlobal?.heroTitle || 'Développez vos compétences en leadership'}
+                  {pageGlobal?.heroTitle || (locale === 'fr' ? 'Développez vos compétences en leadership' : 'Develop your leadership skills')}
                 </h1>
                 <p className="text-gray-100 text-lg md:text-xl mb-8 md:w-5/6">
                   {pageGlobal?.heroDescription ||
-                    'Découvrez notre catalogue de formations pour développer vos compétences et accélérer votre carrière.'}
+                    (locale === 'fr'
+                      ? 'Découvrez notre catalogue de formations pour développer vos compétences et accélérer votre carrière.'
+                      : 'Discover our training catalog to develop your skills and accelerate your career.')}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <a
                     href="#formations-list"
                     className="bg-[#0039F0] hover:bg-[#0030cc] transition-colors duration-300 text-white font-semibold py-3 px-8 rounded-full shadow-lg text-center"
                   >
-                    {pageGlobal?.heroButtonText || 'Voir les formations'}
+                    {pageGlobal?.heroButtonText || (locale === 'fr' ? 'Voir les formations' : 'View trainings')}
                   </a>
                   <Link
                     href="/contact"
                     className="bg-transparent border-2 border-white hover:bg-white/10 transition-colors duration-300 text-white font-semibold py-3 px-8 rounded-full text-center"
                   >
-                    Nous contacter
+                    {t.common.contactUs}
                   </Link>
                 </div>
               </div>
@@ -84,15 +91,17 @@ export default async function FormationsPage() {
             <div>
               <div className="inline-flex items-center bg-[#0039F0]/10 px-4 py-2 rounded-full mb-4">
                 <GraduationCap className="text-[#0039F0] mr-2" size={20} />
-                <span className="text-[#0039F0] font-semibold">Catalogue de formations</span>
+                <span className="text-[#0039F0] font-semibold">{locale === 'fr' ? 'Catalogue de formations' : 'Training Catalog'}</span>
               </div>
               <h2 className="text-3xl md:text-5xl text-gray-800 font-extrabold mb-4">
-                {pageGlobal?.trainingsSectionTitle || 'Nos domaines de formation'}
+                {pageGlobal?.trainingsSectionTitle || (locale === 'fr' ? 'Nos domaines de formation' : 'Our training domains')}
               </h2>
               <p className="text-gray-600 md:max-w-2xl">
                 {pageGlobal?.trainingsSectionDescription ||
                   pageGlobal?.heroDescription ||
-                  `Explorez nos ${trainingDomains.docs.length} domaines de formation comprenant plus de ${totalTrainings} formations spécialisées pour tous les niveaux.`}
+                  (locale === 'fr'
+                    ? `Explorez nos ${trainingDomains.docs.length} domaines de formation comprenant plus de ${totalTrainings} formations spécialisées pour tous les niveaux.`
+                    : `Explore our ${trainingDomains.docs.length} training domains comprising more than ${totalTrainings} specialized trainings for all levels.`)}
               </p>
             </div>
 
@@ -102,7 +111,7 @@ export default async function FormationsPage() {
                 <input
                   type="text"
                   className="bg-white border border-gray-200 rounded-full py-3 pl-12 pr-4 w-full md:w-[300px] focus:outline-none focus:ring-2 focus:ring-[#0039F0]/20 focus:border-[#0039F0]"
-                  placeholder="Rechercher une formation..."
+                  placeholder={locale === 'fr' ? 'Rechercher une formation...' : 'Search for a training...'}
                 />
                 <Search
                   className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
@@ -113,23 +122,24 @@ export default async function FormationsPage() {
           </div>
 
           <div className="mt-8">
-            <TrainingsList />
+            <TrainingsList locale={locale} />
           </div>
 
           {/* Contact CTA */}
           <div className="mt-20 bg-gray-100 rounded-xl p-8 md:p-12 text-center">
             <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-              Besoin d&apos;une formation sur mesure?
+              {locale === 'fr' ? 'Besoin d\'une formation sur mesure?' : 'Need a custom training?'}
             </h3>
             <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-              Notre équipe peut élaborer un programme personnalisé adapté aux besoins spécifiques de
-              votre organisation.
+              {locale === 'fr'
+                ? 'Notre équipe peut élaborer un programme personnalisé adapté aux besoins spécifiques de votre organisation.'
+                : 'Our team can develop a customized program adapted to the specific needs of your organization.'}
             </p>
             <Link
               href="/contact"
               className="inline-flex items-center justify-center bg-[#0039F0] hover:bg-[#0030cc] transition-colors duration-300 text-white font-semibold py-3 px-8 rounded-full"
             >
-              Contactez-nous
+              {t.common.contactUs}
             </Link>
           </div>
         </section>

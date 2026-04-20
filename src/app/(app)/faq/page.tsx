@@ -6,19 +6,25 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import FaqItem from '@/components/FaqItem'
 import { Faq } from '@/payload-types'
+import { getLocale } from '@/lib/i18n'
+import { Locale, translations } from '@/lib/translations'
 
 export default async function FaqPage() {
+  const locale = await getLocale() as Locale
+  const t = translations[locale]
   try {
     const payload = await getPayload({ config })
 
     // Fetch the page global settings
     const pageGlobal = await payload.findGlobal({
       slug: 'faqPage',
+      locale: locale as any,
     })
 
     // Fetch all FAQ items
     const { docs: faqItems } = await payload.find({
       collection: 'faq',
+      locale: locale as any,
     })
 
     // Group FAQs by first letter for table of contents
@@ -46,8 +52,8 @@ export default async function FaqPage() {
               className="object-cover"
               src={
                 pageGlobal?.heroImage &&
-                typeof pageGlobal?.heroImage !== 'number' &&
-                pageGlobal?.heroImage.url
+                  typeof pageGlobal?.heroImage !== 'number' &&
+                  pageGlobal?.heroImage.url
                   ? pageGlobal?.heroImage.url
                   : '/hero.jpg'
               }
@@ -59,14 +65,13 @@ export default async function FaqPage() {
             <div className="max-w-3xl">
               <div className="inline-flex items-center bg-white/10 px-4 py-2 rounded-full mb-6 backdrop-blur-sm">
                 <MessageCircleQuestion className="text-white mr-2" size={18} />
-                <span className="text-white font-semibold">Questions fréquentes</span>
+                <span className="text-white font-semibold">{t.common.frequentlyAskedQuestions}</span>
               </div>
               <h1 className="font-extrabold text-white text-4xl md:text-6xl leading-tight mb-6">
-                {pageGlobal?.heroTitle || 'Des réponses à toutes vos questions'}
+                {pageGlobal?.heroTitle || t.faq.heroTitle}
               </h1>
               <p className="text-gray-100 text-lg md:text-xl mb-8 md:w-5/6">
-                {pageGlobal?.heroDescription ||
-                  'Retrouvez ici les réponses aux questions les plus fréquemment posées sur nos programmes, nos formations et notre association.'}
+                {pageGlobal?.heroDescription || t.faq.heroDescription}
               </p>
             </div>
           </div>
@@ -84,14 +89,14 @@ export default async function FaqPage() {
                 />
                 <input
                   type="search"
-                  placeholder="Rechercher une question..."
+                  placeholder={t.faq.searchPlaceholder}
                   className="w-full pl-12 pr-4 py-4 rounded-full border border-gray-200 focus:border-[#0039F0] focus:ring-2 focus:ring-[#0039F0]/20 focus:outline-none transition-colors bg-white shadow-sm"
                 />
               </div>
               <p className="text-gray-500 text-sm mt-3 text-center">
-                Vous ne trouvez pas de réponse à votre question ?{' '}
+                {t.faq.notFindingAnswer}{' '}
                 <Link href="/contact" className="text-[#0039F0] hover:underline">
-                  Contactez-nous
+                  {t.common.contactUs}
                 </Link>
               </p>
             </div>
@@ -99,11 +104,10 @@ export default async function FaqPage() {
             {/* FAQ Title */}
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
-                {pageGlobal?.faqSectionTitle || 'Foire aux questions'}
+                {pageGlobal?.faqSectionTitle || t.faq.faqSectionTitle}
               </h2>
               <p className="text-gray-600 max-w-3xl mx-auto">
-                {pageGlobal?.faqSectionDescription ||
-                  "Consultez nos réponses aux questions les plus fréquemment posées. Si vous ne trouvez pas ce que vous cherchez, n'hésitez pas à nous contacter."}
+                {pageGlobal?.faqSectionDescription || t.faq.faqSectionDescription}
               </p>
             </div>
 
@@ -112,7 +116,7 @@ export default async function FaqPage() {
               <div className="mb-12">
                 <div className="bg-white rounded-xl p-6 shadow-sm">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Navigation par ordre alphabétique
+                    {locale === 'fr' ? 'Navigation par ordre alphabétique' : 'Alphabetical Navigation'}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {alphabeticalLetters.map((letter) => (
@@ -138,7 +142,7 @@ export default async function FaqPage() {
                       <span className="text-[#0039F0] font-bold text-xl">{letter}</span>
                     </div>
                     <h2 className="text-2xl font-bold text-gray-800">
-                      Questions commençant par {letter}
+                      {t.faq.questionsStartingWith.replace('{letter}', letter)}
                     </h2>
                   </div>
                   <div className="grid grid-cols-1 gap-6">
@@ -153,17 +157,16 @@ export default async function FaqPage() {
             {/* Contact CTA */}
             <div className="mt-20 bg-white rounded-xl p-8 md:p-12 text-center shadow-sm">
               <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-                Vous n&apos;avez pas trouvé de réponse à votre question?
+                {t.contact.stillHaveQuestions}
               </h3>
               <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-                Notre équipe est disponible pour répondre à toutes vos questions supplémentaires.
-                N&apos;hésitez pas à nous contacter directement.
+                {t.contact.faqDescription}
               </p>
               <Link
                 href="/contact"
                 className="inline-flex items-center justify-center bg-[#0039F0] hover:bg-[#0030cc] transition-colors duration-300 text-white font-semibold py-3 px-8 rounded-full"
               >
-                Contactez-nous <ArrowRight size={16} className="ml-2" />
+                {t.common.contactUs} <ArrowRight size={16} className="ml-2" />
               </Link>
             </div>
           </div>
@@ -174,12 +177,12 @@ export default async function FaqPage() {
     console.error('Error loading FAQ page:', error)
     return (
       <div className="container mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Une erreur est survenue</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">{t.common.errorTitle}</h1>
         <p className="text-gray-600 mb-6">
-          Nous n&apos;avons pas pu charger la page FAQ. Veuillez réessayer plus tard.
+          {t.faq.errorLoadingFaq} {t.common.tryAgainLater}
         </p>
         <Link href="/" className="text-[#0039F0] hover:underline">
-          Retour à l&apos;accueil
+          {t.common.backToHome}
         </Link>
       </div>
     )

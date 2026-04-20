@@ -11,16 +11,19 @@ export const Programs: CollectionConfig = {
       name: 'name',
       label: 'Nom du domaine de programme',
       type: 'text',
+      localized: true,
     },
     {
       name: 'shortDescription',
       label: 'Courte description du programme',
       type: 'text',
+      localized: true,
     },
     {
       name: 'longDescription',
       label: 'Description détaillée du programme',
       type: 'richText',
+      localized: true,
     },
     {
       name: 'image',

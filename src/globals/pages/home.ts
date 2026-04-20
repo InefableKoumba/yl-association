@@ -27,18 +27,21 @@ export const homePageFields: Field[] = [
         name: 'heroTitle',
         type: 'text',
         label: "Titre sur l'image d'en-tête",
+        localized: true,
       },
       {
         name: 'heroSubtitle',
         type: 'text',
         label: "Sous-titre sur l'image d'en-tête",
         required: false,
+        localized: true,
       },
       {
         name: 'heroDescription',
         type: 'textarea',
         required: false,
         label: "Description sur l'image d'en-tête",
+        localized: true,
       },
       {
         name: 'heroPrimaryButtonText',
@@ -46,6 +49,7 @@ export const homePageFields: Field[] = [
         defaultValue: "S'inscrire",
         label: 'Texte du bouton principal',
         required: false,
+        localized: true,
       },
       {
         name: 'heroPrimaryButtonLink',
@@ -60,6 +64,7 @@ export const homePageFields: Field[] = [
         defaultValue: 'En savoir plus',
         label: 'Texte du bouton secondaire',
         required: false,
+        localized: true,
       },
       {
         name: 'heroSecondaryButtonLink',
@@ -87,6 +92,7 @@ export const homePageFields: Field[] = [
             type: 'text',
             label: 'Libellé (ex: personnes formées)',
             required: true,
+            localized: true,
           },
           {
             name: 'icon',
@@ -142,12 +148,14 @@ export const homePageFields: Field[] = [
         type: 'text',
         defaultValue: 'Notre Mission',
         label: 'Titre de la mission',
+        localized: true,
       },
       {
         name: 'missionHeading',
         type: 'text',
         defaultValue: 'Former la prochaine génération de leaders',
         label: 'En-tête de la mission',
+        localized: true,
       },
       {
         name: 'missionDescription',
@@ -155,6 +163,7 @@ export const homePageFields: Field[] = [
         defaultValue:
           'Notre mission est de développer le potentiel de leadership des jeunes talents à travers des formations innovantes, du mentorat personnalisé et des opportunités de mise en pratique concrètes.',
         label: 'Description de la mission (paragraphe 1)',
+        localized: true,
       },
       {
         name: 'missionDescription2',
@@ -163,18 +172,21 @@ export const homePageFields: Field[] = [
           "Nous nous engageons à créer un environnement favorable à l'apprentissage, l'échange et la croissance personnelle, où chacun peut développer les compétences nécessaires pour avoir un impact positif dans sa communauté et sa carrière.",
         label: 'Description de la mission (paragraphe 2)',
         required: false,
+        localized: true,
       },
       {
         name: 'visionTitle',
         type: 'text',
         defaultValue: 'Notre Vision',
         label: 'Titre de la vision',
+        localized: true,
       },
       {
         name: 'visionHeading',
         type: 'text',
         defaultValue: 'Un monde où chaque jeune peut réaliser son plein potentiel',
         label: 'En-tête de la vision',
+        localized: true,
       },
       {
         name: 'visionDescription',
@@ -182,12 +194,14 @@ export const homePageFields: Field[] = [
         defaultValue:
           'Nous aspirons à créer une société où chaque jeune, indépendamment de son origine ou de son parcours, a accès aux ressources, aux formations et au soutien nécessaires pour développer ses compétences en leadership et contribuer positivement à un avenir durable et équitable.',
         label: 'Description de la vision',
+        localized: true,
       },
       {
         name: 'valuesTitle',
         type: 'text',
         defaultValue: 'Nos Valeurs Fondamentales',
         label: 'Titre des valeurs',
+        localized: true,
       },
       {
         name: 'values',
@@ -201,12 +215,14 @@ export const homePageFields: Field[] = [
             type: 'text',
             label: 'Titre',
             required: true,
+            localized: true,
           },
           {
             name: 'description',
             type: 'textarea',
             label: 'Description',
             required: true,
+            localized: true,
           },
         ],
         defaultValue: [
@@ -246,23 +262,27 @@ export const homePageFields: Field[] = [
         type: 'text',
         defaultValue: 'À propos de nous',
         label: 'Titre de la section "À propos"',
+        localized: true,
       },
       {
         name: 'aboutUsSectionSubtitle',
         type: 'text',
         label: 'Sous-titre de la section "À propos"',
         required: false,
+        localized: true,
       },
       {
         name: 'aboutUsSectionDescription',
         type: 'richText',
         label: 'Description de la section À propos',
+        localized: true,
       },
       {
         name: 'aboutUsSectionButtonText',
         type: 'text',
         defaultValue: 'En savoir plus',
         label: 'Texte du bouton de la section "À propos"',
+        localized: true,
       },
       {
         name: 'aboutUsSectionButtonLink',
@@ -309,12 +329,14 @@ export const homePageFields: Field[] = [
         type: 'text',
         defaultValue: 'Nos chiffres',
         label: 'Titre de la section statistiques',
+        localized: true,
       },
       {
         name: 'statsSectionDescription',
         type: 'textarea',
         label: 'Description de la section statistiques',
         required: false,
+        localized: true,
       },
       {
         name: 'stats',
@@ -333,6 +355,7 @@ export const homePageFields: Field[] = [
             type: 'text',
             label: 'Libellé',
             required: true,
+            localized: true,
           },
           {
             name: 'icon',
@@ -357,11 +380,13 @@ export const homePageFields: Field[] = [
         type: 'text',
         defaultValue: 'Nos partenaires',
         label: 'Titre de la section "Nos partenaires"',
+        localized: true,
       },
       {
         name: 'ourPartnersSectionDescription',
         type: 'textarea',
         label: 'Description de la section "Nos partenaires"',
+        localized: true,
       },
       {
         name: 'partnersToShow',
@@ -382,6 +407,7 @@ export const homePageFields: Field[] = [
         type: 'text',
         defaultValue: 'Voir tous nos partenaires',
         label: 'Texte du lien "Voir tous nos partenaires"',
+        localized: true,
         admin: {
           condition: (data, siblingData) => siblingData?.showAllPartnersLink === true,
         },
@@ -400,11 +426,13 @@ export const homePageFields: Field[] = [
         type: 'text',
         defaultValue: 'Nos formations',
         label: 'Titre de la section "Nos formations"',
+        localized: true,
       },
       {
         name: 'ourTrainingsSectionDescription',
         type: 'textarea',
         label: 'Description de la section "Nos formations"',
+        localized: true,
       },
       {
         name: 'trainingDomainsToFeature',
@@ -419,6 +447,7 @@ export const homePageFields: Field[] = [
         type: 'text',
         defaultValue: 'Voir toutes nos formations',
         label: 'Texte du bouton de la section formations',
+        localized: true,
       },
       {
         name: 'trainingsSectionButtonLink',
@@ -446,12 +475,14 @@ export const homePageFields: Field[] = [
         type: 'text',
         defaultValue: 'Ce que disent nos étudiants',
         label: 'Titre de la section témoignages',
+        localized: true,
       },
       {
         name: 'testimonialsSectionDescription',
         type: 'textarea',
         label: 'Description de la section témoignages',
         required: false,
+        localized: true,
       },
       {
         name: 'testimonials',
@@ -465,18 +496,21 @@ export const homePageFields: Field[] = [
             type: 'text',
             label: 'Nom',
             required: true,
+            localized: true,
           },
           {
             name: 'role',
             type: 'text',
             label: 'Rôle / Position',
             required: false,
+            localized: true,
           },
           {
             name: 'content',
             type: 'textarea',
             label: 'Contenu du témoignage',
             required: true,
+            localized: true,
           },
           {
             name: 'photo',
@@ -501,11 +535,13 @@ export const homePageFields: Field[] = [
         type: 'text',
         defaultValue: 'FAQ',
         label: 'Titre de la section "FAQ"',
+        localized: true,
       },
       {
         name: 'faqSectionDescription',
         type: 'textarea',
         label: 'Description de la section "FAQ"',
+        localized: true,
       },
       {
         name: 'frequentlyAskedQuestions',
@@ -520,6 +556,7 @@ export const homePageFields: Field[] = [
         type: 'text',
         defaultValue: 'Voir toutes les questions',
         label: 'Texte du bouton de la section FAQ',
+        localized: true,
       },
       {
         name: 'faqSectionButtonLink',
@@ -541,11 +578,13 @@ export const homePageFields: Field[] = [
         type: 'text',
         defaultValue: 'Nous contacter',
         label: 'Titre de la section "Nous contacter"',
+        localized: true,
       },
       {
         name: 'contactUsSectionDescription',
         type: 'textarea',
         label: 'Description de la section "Nous contacter"',
+        localized: true,
       },
       {
         name: 'contactUsSectionImage',
@@ -558,6 +597,7 @@ export const homePageFields: Field[] = [
         type: 'text',
         defaultValue: 'Nous contacter',
         label: 'Texte du bouton de la section "Nous contacter"',
+        localized: true,
       },
       {
         name: 'contactUsSectionButtonLink',
@@ -579,12 +619,14 @@ export const homePageFields: Field[] = [
         type: 'text',
         label: 'Meta Titre',
         required: false,
+        localized: true,
       },
       {
         name: 'metaDescription',
         type: 'textarea',
         label: 'Meta Description',
         required: false,
+        localized: true,
       },
       {
         name: 'ogImage',

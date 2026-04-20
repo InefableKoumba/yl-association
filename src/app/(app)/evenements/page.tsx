@@ -4,15 +4,21 @@ import { Calendar, Clock, MapPin, Filter, Search } from 'lucide-react'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { format } from 'date-fns'
-import { fr } from 'date-fns/locale'
+import { fr, enUS } from 'date-fns/locale'
+import { getLocale } from '@/lib/i18n'
+import { Locale, translations } from '@/lib/translations'
 
 export default async function EventsPage() {
+  const locale = await getLocale() as Locale
+  const t = translations[locale]
+  const dateLocale = locale === 'fr' ? fr : enUS
   try {
     const payload = await getPayload({ config })
 
     // Fetch the page global settings
     const pageGlobal = await payload.findGlobal({
       slug: 'eventsPage',
+      locale: locale as any,
     })
 
     // Fetch events
@@ -24,6 +30,7 @@ export default async function EventsPage() {
         },
       },
       sort: 'date',
+      locale: locale as any,
     })
 
     const { docs: pastEvents } = await payload.find({
@@ -35,6 +42,7 @@ export default async function EventsPage() {
       },
       sort: '-date',
       limit: 3, // Show only the 3 most recent past events
+      locale: locale as any,
     })
 
     return (
@@ -55,11 +63,10 @@ export default async function EventsPage() {
           />
           <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-center text-white p-6">
             <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center">
-              {pageGlobal?.heroTitle || 'Événements'}
+              {pageGlobal?.heroTitle || t.events.heroTitle}
             </h1>
             <p className="text-xl md:text-2xl text-center max-w-2xl">
-              {pageGlobal?.heroDescription ||
-                'Découvrez nos événements à venir et rejoignez notre communauté de jeunes leaders'}
+              {pageGlobal?.heroDescription || t.events.heroDescription}
             </p>
           </div>
         </div>
@@ -72,20 +79,20 @@ export default async function EventsPage() {
               size={20}
             />
             <input
-              placeholder="Rechercher un événement..."
+              placeholder={t.common.searchPlaceholder}
               className="pl-10 w-full py-2.5 px-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#0039F0]/20 focus:border-[#0039F0] transition-colors"
             />
           </div>
           <button className="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2.5 px-4 rounded-lg transition-colors">
             <Filter size={18} />
-            Filtrer
+            {t.common.filter}
           </button>
         </div>
 
         {/* Upcoming Events Section */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold mb-8 border-b pb-2">
-            {pageGlobal?.upcomingEventsSectionTitle || 'Événements à venir'}
+            {pageGlobal?.upcomingEventsSectionTitle || t.common.upcomingEvents}
           </h2>
           {upcomingEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -111,7 +118,7 @@ export default async function EventsPage() {
                     <div className="flex items-center gap-2 text-gray-600 mb-2">
                       <Calendar size={16} />
                       <span>
-                        {event.date && format(new Date(event.date), 'dd MMMM yyyy', { locale: fr })}
+                        {event.date && format(new Date(event.date), 'dd MMMM yyyy', { locale: dateLocale })}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600 mb-2">
@@ -126,13 +133,13 @@ export default async function EventsPage() {
                     {event.isRegistrationAvailable ? (
                       <Link href={event.registrationLink || '/contact'}>
                         <button className="w-full bg-[#0039F0] hover:bg-[#0030cc] text-white font-medium py-2.5 px-6 rounded-lg transition-colors">
-                          S&apos;inscrire
+                          {t.common.register}
                         </button>
                       </Link>
                     ) : (
                       <Link href={`/evenements/${event.id}`}>
                         <button className="w-full border border-gray-300 hover:border-[#0039F0] text-gray-700 hover:text-[#0039F0] font-medium py-2.5 px-6 rounded-lg transition-colors">
-                          Voir les détails
+                          {t.common.viewDetails}
                         </button>
                       </Link>
                     )}
@@ -142,9 +149,9 @@ export default async function EventsPage() {
             </div>
           ) : (
             <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <p className="text-gray-600">Aucun événement à venir pour le moment.</p>
+              <p className="text-gray-600">{t.common.noUpcomingEvents}</p>
               <p className="mt-2 text-gray-500">
-                Revenez bientôt pour découvrir nos prochains événements.
+                {t.common.checkBackSoon}
               </p>
             </div>
           )}
@@ -153,7 +160,7 @@ export default async function EventsPage() {
         {/* Past Events Section */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold mb-8 border-b pb-2">
-            {pageGlobal?.pastEventsSectionTitle || 'Événements passés'}
+            {pageGlobal?.pastEventsSectionTitle || t.common.pastEvents}
           </h2>
           {pastEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -179,7 +186,7 @@ export default async function EventsPage() {
                     <div className="flex items-center gap-2 text-gray-600 mb-2">
                       <Calendar size={16} />
                       <span>
-                        {event.date && format(new Date(event.date), 'dd MMMM yyyy', { locale: fr })}
+                        {event.date && format(new Date(event.date), 'dd MMMM yyyy', { locale: dateLocale })}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600 mb-2">
@@ -193,7 +200,7 @@ export default async function EventsPage() {
                     <p className="mb-6 text-gray-700">{event.shortDescription}</p>
                     <Link href={`/evenements/${event.id}`}>
                       <button className="w-full border border-gray-300 hover:border-[#0039F0] text-gray-700 hover:text-[#0039F0] font-medium py-2.5 px-6 rounded-lg transition-colors">
-                        Voir le récapitulatif
+                        {t.common.viewSummary}
                       </button>
                     </Link>
                   </div>
@@ -202,7 +209,7 @@ export default async function EventsPage() {
             </div>
           ) : (
             <div className="text-center py-12 bg-gray-50 rounded-lg">
-              <p className="text-gray-600">Aucun événement passé enregistré.</p>
+              <p className="text-gray-600">{t.common.noPastEvents}</p>
             </div>
           )}
         </section>
@@ -210,25 +217,23 @@ export default async function EventsPage() {
         {/* Call to Action */}
         <section className="bg-blue-50 rounded-xl p-8 text-center mb-12">
           <h2 className="text-2xl font-bold mb-4">
-            {pageGlobal?.ctaSectionTitle ||
-              'Vous souhaitez proposer un événement ou devenir intervenant?'}
+            {pageGlobal?.ctaSectionTitle || t.common.proposeTitle}
           </h2>
           <p className="mb-6 max-w-3xl mx-auto">
-            {pageGlobal?.ctaSectionDescription ||
-              "Nous sommes toujours à la recherche de nouvelles idées et de nouveaux talents pour enrichir notre communauté. Si vous avez une idée d'événement ou si vous souhaitez partager votre expertise, n'hésitez pas à nous contacter."}
+            {pageGlobal?.ctaSectionDescription || t.common.proposeDescription}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/#contact"
               className="text-[#0039F0] transition-all duration-300 hover:bg-[#0039F0] hover:text-white text-sm font-medium border border-[#0039F0] rounded-full px-6 py-3"
             >
-              {pageGlobal?.proposeEventButtonText || 'Proposer un événement'}
+              {pageGlobal?.proposeEventButtonText || t.common.proposeEvent}
             </Link>
             <Link
               href="/#contact"
               className="text-[#0039F0] transition-all duration-300 hover:bg-[#0039F0] hover:text-white text-sm font-medium border border-[#0039F0] rounded-full px-6 py-3"
             >
-              {pageGlobal?.becomeSpeakerButtonText || 'Devenir intervenant'}
+              {pageGlobal?.becomeSpeakerButtonText || t.common.becomeSpeaker}
             </Link>
           </div>
         </section>
@@ -238,12 +243,12 @@ export default async function EventsPage() {
     console.error('Error loading events page:', error)
     return (
       <div className="container mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Une erreur est survenue</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">{t.common.errorTitle}</h1>
         <p className="text-gray-600 mb-6">
-          Nous n&apos;avons pas pu charger la page des événements. Veuillez réessayer plus tard.
+          {t.events.errorLoadingEvents} {t.common.tryAgainLater}
         </p>
         <Link href="/" className="text-[#0039F0] hover:underline">
-          Retour à l&apos;accueil
+          {t.common.backToHome}
         </Link>
       </div>
     )

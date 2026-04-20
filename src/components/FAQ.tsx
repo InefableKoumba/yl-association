@@ -5,17 +5,20 @@ import { Faq } from '@/payload-types'
 import FaqItem from './FaqItem'
 import { MessageCircleQuestion } from 'lucide-react'
 
-export default async function FAQ() {
+import { Locale } from '@/lib/i18n'
+
+export default async function FAQ({ locale }: { locale: Locale }) {
   try {
     const payload = await getPayload({ config })
     const faq = await payload.find({
       collection: 'faq',
+      locale: locale as any,
     })
 
     if (faq.docs.length === 0) {
       return (
         <div className="text-center text-gray-500 py-8">
-          Aucune question fréquente disponible pour le moment.
+          {locale === 'fr' ? 'Aucune question fréquente disponible pour le moment.' : 'No frequently asked questions available for now.'}
         </div>
       )
     }
@@ -38,7 +41,9 @@ export default async function FAQ() {
     console.error('Error loading FAQ:', error)
     return (
       <div className="text-center text-red-500 py-8">
-        Une erreur est survenue lors du chargement des questions fréquentes.
+        {locale === 'fr'
+          ? 'Une erreur est survenue lors du chargement des questions fréquentes.'
+          : 'An error occurred while loading the frequently asked questions.'}
       </div>
     )
   }

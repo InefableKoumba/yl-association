@@ -13,12 +13,12 @@ interface MissionVisionProps {
     visionDescription?: string | null
     valuesTitle?: string | null
     values?:
-      | {
-          title: string
-          description: string
-          id?: string | null
-        }[]
-      | null
+    | {
+      title: string
+      description: string
+      id?: string | null
+    }[]
+    | null
   } | null
 }
 
@@ -69,7 +69,7 @@ export default function MissionVision({ missionVisionSection }: MissionVisionPro
   ]
 
   return (
-    <section className="px-4 md:px-8 xl:px-32 py-24 bg-gradient-to-br from-[#0039F0]/5 to-white">
+    <section className="px-4 md:px-8 xl:px-32 py-24 bg-gradient-to-br from-[#0039F0]/5 to-white pt-44">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <div>
           <div className="mb-12">

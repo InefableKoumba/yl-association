@@ -12,6 +12,7 @@ export const Partners: CollectionConfig = {
       type: 'text',
       required: true,
       label: 'Nom du partenaire',
+      localized: true,
     },
     {
       name: 'websiteUrl',

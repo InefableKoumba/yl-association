@@ -11,10 +11,12 @@ export const contactPageFields: Field[] = [
     name: 'heroTitle',
     type: 'text',
     label: "Titre sur l'image d'en-tête",
+    localized: true,
   },
   {
     name: 'heroDescription',
     type: 'textarea',
     label: "Description sur l'image d'en-tête",
+    localized: true,
   },
 ]

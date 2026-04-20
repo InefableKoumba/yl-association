@@ -16,6 +16,7 @@ export const Events: CollectionConfig = {
       label: "Titre de l'événement",
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       name: 'status',
@@ -51,6 +52,7 @@ export const Events: CollectionConfig = {
       label: 'Lieu',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       name: 'image',
@@ -63,11 +65,13 @@ export const Events: CollectionConfig = {
       label: 'Description courte',
       type: 'textarea',
       required: true,
+      localized: true,
     },
     {
       name: 'longDescription',
       label: 'Description détaillée',
       type: 'richText',
+      localized: true,
     },
     {
       name: 'registrationLink',

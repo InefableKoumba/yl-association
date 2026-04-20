@@ -2,16 +2,20 @@ import Image from 'next/image'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import React from 'react'
-import { RichText } from '@payloadcms/richtext-lexical/react'
 import { AboutPage } from '@/payload-types'
+import { RichText } from '@payloadcms/richtext-lexical/react'
+import { getLocale, translations } from '@/lib/i18n'
 import Link from 'next/link'
 import { Users, Info, Target } from 'lucide-react'
 
 export default async function AboutUsPage() {
+  const locale = await getLocale()
+  const t = translations[locale]
   try {
     const payload = await getPayload({ config })
     const pageGlobal = await payload.findGlobal({
       slug: 'aboutPage',
+      locale: locale as any,
     })
 
     return (
@@ -26,8 +30,8 @@ export default async function AboutUsPage() {
                 className="object-center object-cover"
                 src={
                   pageGlobal?.heroImage &&
-                  typeof pageGlobal?.heroImage !== 'number' &&
-                  pageGlobal?.heroImage.url
+                    typeof pageGlobal?.heroImage !== 'number' &&
+                    pageGlobal?.heroImage.url
                     ? pageGlobal?.heroImage.url
                     : '/hero2.jpg'
                 }
@@ -40,27 +44,29 @@ export default async function AboutUsPage() {
               <div className="max-w-3xl">
                 <div className="inline-flex items-center bg-[#0039F0]/10 px-4 py-2 rounded-full mb-6 backdrop-blur-sm">
                   <Info className="text-white mr-2" size={20} />
-                  <span className="text-white font-semibold">Notre Histoire</span>
+                  <span className="text-white font-semibold">{t.about.ourHistory}</span>
                 </div>
                 <h1 className="font-extrabold text-white text-4xl md:text-6xl leading-tight mb-6">
-                  {pageGlobal?.heroTitle || 'Découvrez Young Leaders'}
+                  {pageGlobal?.heroTitle || (locale === 'fr' ? 'Découvrez Young Leaders' : 'Discover Young Leaders')}
                 </h1>
                 <p className="text-gray-100 text-lg md:text-xl mb-8 md:w-5/6">
                   {pageGlobal?.heroDescription ||
-                    'Nous sommes une association dédiée à former et accompagner la prochaine génération de leaders.'}
+                    (locale === 'fr'
+                      ? 'Nous sommes une association dédiée à former et accompagner la prochaine génération de leaders.'
+                      : 'We are an association dedicated to training and supporting the next generation of leaders.')}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <a
                     href="#about-content"
                     className="bg-[#0039F0] hover:bg-[#0030cc] transition-colors duration-300 text-white font-semibold py-3 px-8 rounded-full shadow-lg text-center"
                   >
-                    {pageGlobal?.heroButtonText || 'En savoir plus'}
+                    {pageGlobal?.heroButtonText || t.common.learnMore}
                   </a>
                   <Link
                     href="/contact"
                     className="bg-transparent border-2 border-white hover:bg-white/10 transition-colors duration-300 text-white font-semibold py-3 px-8 rounded-full text-center"
                   >
-                    Nous contacter
+                    {t.common.contactUs}
                   </Link>
                 </div>
               </div>
@@ -73,10 +79,10 @@ export default async function AboutUsPage() {
           <div className="mb-16">
             <div className="inline-flex items-center bg-[#0039F0]/10 px-4 py-2 rounded-full mb-6">
               <Target className="text-[#0039F0] mr-2" size={20} />
-              <span className="text-[#0039F0] font-semibold">Notre Mission</span>
+              <span className="text-[#0039F0] font-semibold">{t.about.ourMission}</span>
             </div>
             <h2 className="text-3xl md:text-5xl text-gray-800 font-extrabold mb-8">
-              {pageGlobal?.aboutUsSectionTitle || 'À propos de Young Leaders'}
+              {pageGlobal?.aboutUsSectionTitle || (locale === 'fr' ? 'À propos de Young Leaders' : 'About Young Leaders')}
             </h2>
 
             <div className="prose prose-lg max-w-none text-gray-700">
@@ -98,7 +104,7 @@ export default async function AboutUsPage() {
             pageGlobal.aboutUsGallerySectionImages.length > 0 && (
               <div className="mt-16">
                 <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-6">
-                  {pageGlobal.aboutUsGallerySectionTitle || 'Notre galerie photos'}
+                  {pageGlobal.aboutUsGallerySectionTitle || (locale === 'fr' ? 'Notre galerie photos' : 'Our photo gallery')}
                 </h3>
 
                 {pageGlobal.aboutUsGallerySectionDescription && (
@@ -133,17 +139,16 @@ export default async function AboutUsPage() {
           {/* CTA Section */}
           <div className="mt-20 bg-gray-100 rounded-xl p-8 md:p-12 text-center">
             <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-              Rejoignez-nous dans notre mission
+              {t.about.joinOurMission}
             </h3>
             <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-              Vous souhaitez en savoir plus sur nos activités ou vous impliquer dans notre
-              association ? Contactez-nous dès aujourd&apos;hui.
+              {t.about.contactUsDescription}
             </p>
             <Link
               href="/contact"
               className="inline-flex items-center justify-center bg-[#0039F0] hover:bg-[#0030cc] transition-colors duration-300 text-white font-semibold py-3 px-8 rounded-full"
             >
-              Contactez-nous
+              {t.common.contactUs}
             </Link>
           </div>
         </section>

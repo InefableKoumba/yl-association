@@ -12,12 +12,14 @@ export const FAQ: CollectionConfig = {
       type: 'text',
       required: true,
       label: 'Question',
+      localized: true,
     },
     {
       name: 'answer',
       type: 'textarea',
       required: true,
       label: 'Réponse',
+      localized: true,
     },
   ],
 }

@@ -1,6 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 import { Lightbulb, Award, Star } from 'lucide-react'
+import { Locale, translations } from '@/lib/translations'
 
 interface Testimonial {
   quote: string
@@ -38,19 +39,22 @@ const defaultTestimonials: Testimonial[] = [
 ]
 
 export default function Testimonials({
+  locale,
   testimonials = defaultTestimonials,
 }: {
+  locale: Locale
   testimonials?: Testimonial[]
 }) {
+  const t = translations[locale]
+
   return (
     <section className="px-4 md:px-8 xl:px-32 py-24">
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-5xl text-gray-800 font-extrabold mb-4">
-          Témoignages de Réussite
+          {t.common.successStories}
         </h2>
         <p className="text-gray-600 md:w-2/3 mx-auto">
-          Découvrez comment notre association a transformé la carrière et le développement personnel
-          de nos participants.
+          {t.common.testimonialsDescription}
         </p>
       </div>
 
@@ -61,21 +65,27 @@ export default function Testimonials({
             <Lightbulb size={40} className="text-[#0039F0]" />
           </div>
           <h3 className="text-4xl font-bold text-gray-800 mb-2">95%</h3>
-          <p className="text-gray-600">des participants recommandent nos formations</p>
+          <p className="text-gray-600">
+            {t.common.recommendationMetric}
+          </p>
         </div>
         <div className="bg-gradient-to-br from-[#0039F0]/5 to-[#0039F0]/10 p-8 rounded-xl text-center">
           <div className="flex justify-center mb-4">
             <Award size={40} className="text-[#0039F0]" />
           </div>
           <h3 className="text-4xl font-bold text-gray-800 mb-2">+40%</h3>
-          <p className="text-gray-600">d&apos;amélioration des compétences en leadership</p>
+          <p className="text-gray-600">
+            {t.common.leadershipMetric}
+          </p>
         </div>
         <div className="bg-gradient-to-br from-[#0039F0]/5 to-[#0039F0]/10 p-8 rounded-xl text-center">
           <div className="flex justify-center mb-4">
             <Star size={40} className="text-[#0039F0]" />
           </div>
           <h3 className="text-4xl font-bold text-gray-800 mb-2">2500+</h3>
-          <p className="text-gray-600">heures de formation délivrées</p>
+          <p className="text-gray-600">
+            {t.common.hoursMetric}
+          </p>
         </div>
       </div>
 

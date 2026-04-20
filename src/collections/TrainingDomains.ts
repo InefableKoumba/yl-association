@@ -11,6 +11,7 @@ export const TrainingDomains: CollectionConfig = {
       name: 'name',
       label: 'Nom du domaine de formation',
       type: 'text',
+      localized: true,
     },
     {
       name: 'image',
@@ -26,21 +27,25 @@ export const TrainingDomains: CollectionConfig = {
           name: 'name',
           label: 'Nom de la formation',
           type: 'text',
+          localized: true,
         },
         {
           name: 'shortDescription',
           label: 'Description de la formation',
           type: 'textarea',
+          localized: true,
         },
         {
           name: 'longDescription',
           label: 'Description détaillée de la formation',
           type: 'richText',
+          localized: true,
         },
         {
           name: 'price',
           label: 'Prix',
           type: 'text',
+          localized: true,
         },
       ],
     },

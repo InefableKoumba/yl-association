@@ -96,7 +96,7 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'fr') | ('en' | 'fr')[];
   globals: {
     homePage: HomePage;
     aboutPage: AboutPage;
@@ -105,6 +105,7 @@ export interface Config {
     faqPage: FaqPage;
     programsPage: ProgramsPage;
     eventsPage: EventsPage;
+    'site-settings': SiteSetting;
   };
   globalsSelect: {
     homePage: HomePageSelect<false> | HomePageSelect<true>;
@@ -114,8 +115,9 @@ export interface Config {
     faqPage: FaqPageSelect<false> | FaqPageSelect<true>;
     programsPage: ProgramsPageSelect<false> | ProgramsPageSelect<true>;
     eventsPage: EventsPageSelect<false> | EventsPageSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
   };
-  locale: null;
+  locale: 'en' | 'fr';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -807,6 +809,22 @@ export interface EventsPage {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  donationExternalUrl: string;
+  socialLinks?: {
+    facebook?: string | null;
+    instagram?: string | null;
+    linkedin?: string | null;
+    youtube?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "homePage_select".
  */
 export interface HomePageSelect<T extends boolean = true> {
@@ -1042,6 +1060,24 @@ export interface EventsPageSelect<T extends boolean = true> {
   ctaSectionDescription?: T;
   proposeEventButtonText?: T;
   becomeSpeakerButtonText?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  donationExternalUrl?: T;
+  socialLinks?:
+    | T
+    | {
+        facebook?: T;
+        instagram?: T;
+        linkedin?: T;
+        youtube?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

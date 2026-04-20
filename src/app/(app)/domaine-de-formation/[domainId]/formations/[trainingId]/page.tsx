@@ -5,6 +5,9 @@ import config from '@payload-config'
 import Link from 'next/link'
 import Image from 'next/image'
 import { RichText } from '@payloadcms/richtext-lexical/react'
+import { getLocale } from '@/lib/i18n'
+import { Locale, translations } from '@/lib/translations'
+import RegisterButton from './RegisterButton'
 
 interface PageParams {
   domainId: string
@@ -12,6 +15,8 @@ interface PageParams {
 }
 
 export default async function TrainingDetailPage({ params }: any) {
+  const locale = await getLocale() as Locale
+  const t = translations[locale]
   try {
     const { domainId, trainingId } = await params
     const payload = await getPayload({ config })
@@ -20,6 +25,7 @@ export default async function TrainingDetailPage({ params }: any) {
     const trainingDomain = await payload.findByID({
       collection: 'trainingDomains',
       id: domainId,
+      locale: locale as any,
     })
 
     // Find the specific training in the domain's trainings array
@@ -28,15 +34,15 @@ export default async function TrainingDetailPage({ params }: any) {
     if (!training) {
       return (
         <div className="container mx-auto px-4 py-12 text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">Formation non trouvée</h1>
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">{t.trainings.notFoundTitle}</h1>
           <p className="text-gray-600 mb-6">
-            La formation que vous recherchez n&apos;existe pas ou a été supprimée.
+            {t.trainings.notFoundDescription}
           </p>
           <Link
             href={`/domaine-de-formation/${domainId}`}
             className="text-[#0039F0] hover:underline"
           >
-            Retour au domaine de formation
+            {t.trainings.backToDomain}
           </Link>
         </div>
       )
@@ -48,8 +54,8 @@ export default async function TrainingDetailPage({ params }: any) {
           {/* Breadcrumb */}
           <div className="mb-8">
             <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Link href="/formations" className="hover:text-[#0039F0]">
-                Formations
+              <Link href="/domaine-de-formation" className="hover:text-[#0039F0]">
+                {t.nav.trainings}
               </Link>
               <span>•</span>
               <Link href={`/domaine-de-formation/${domainId}`} className="hover:text-[#0039F0]">
@@ -66,7 +72,7 @@ export default async function TrainingDetailPage({ params }: any) {
             className="inline-flex items-center text-gray-600 hover:text-[#0039F0] mb-6 transition-colors"
           >
             <ArrowLeft size={16} className="mr-2" />
-            <span>Retour aux formations de {trainingDomain.name}</span>
+            <span>{t.trainings.backToDomainTrainings.replace('{domain}', trainingDomain.name ?? "")}</span>
           </Link>
 
           <div className="bg-white shadow-md rounded-xl overflow-hidden mb-12">
@@ -75,8 +81,8 @@ export default async function TrainingDetailPage({ params }: any) {
               <Image
                 src={
                   trainingDomain.image &&
-                  typeof trainingDomain.image !== 'number' &&
-                  trainingDomain.image.filename
+                    typeof trainingDomain.image !== 'number' &&
+                    trainingDomain.image.filename
                     ? process.env.NEXT_PUBLIC_CLOUDFLARE_PUB_URL + trainingDomain.image.filename
                     : '/hero2.jpg'
                 }
@@ -103,13 +109,13 @@ export default async function TrainingDetailPage({ params }: any) {
                 <div className="md:w-2/3">
                   <div className="bg-gray-50 p-6 rounded-lg mb-8">
                     <h2 className="text-xl font-bold text-gray-800 mb-4">
-                      Description de la formation
+                      {t.trainings.descriptionTitle}
                     </h2>
                     {training.longDescription && <RichText data={training.longDescription} />}
                   </div>
 
                   <div className="mb-8">
-                    <h2 className="text-xl font-bold text-gray-800 mb-4">Ce que vous apprendrez</h2>
+                    <h2 className="text-xl font-bold text-gray-800 mb-4">{t.trainings.learningTitle}</h2>
                     <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Since we don't have actual learning points in the CMS, we'll show placeholders */}
                       <li className="flex items-start gap-2">
@@ -117,26 +123,26 @@ export default async function TrainingDetailPage({ params }: any) {
                           <div className="w-2 h-2 rounded-full bg-[#0039F0]"></div>
                         </div>
                         <span className="text-gray-700">
-                          Compétences fondamentales en leadership
+                          {t.trainings.fundamentalSkills}
                         </span>
                       </li>
                       <li className="flex items-start gap-2">
                         <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#0039F0]/10 flex items-center justify-center mt-0.5">
                           <div className="w-2 h-2 rounded-full bg-[#0039F0]"></div>
                         </div>
-                        <span className="text-gray-700">Techniques de communication efficace</span>
+                        <span className="text-gray-700">{t.trainings.effectiveCommunication}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#0039F0]/10 flex items-center justify-center mt-0.5">
                           <div className="w-2 h-2 rounded-full bg-[#0039F0]"></div>
                         </div>
-                        <span className="text-gray-700">Gestion d&apos;équipe et motivation</span>
+                        <span className="text-gray-700">{t.trainings.teamManagement}</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#0039F0]/10 flex items-center justify-center mt-0.5">
                           <div className="w-2 h-2 rounded-full bg-[#0039F0]"></div>
                         </div>
-                        <span className="text-gray-700">Résolution de problèmes complexes</span>
+                        <span className="text-gray-700">{t.trainings.problemSolving}</span>
                       </li>
                     </ul>
                   </div>
@@ -146,7 +152,7 @@ export default async function TrainingDetailPage({ params }: any) {
                 <div className="md:w-1/3">
                   <div className="bg-gray-50 p-6 rounded-lg mb-6">
                     <h3 className="text-lg font-bold text-gray-800 mb-4">
-                      Détails de la formation
+                      {t.trainings.detailsTitle}
                     </h3>
                     <ul className="space-y-4">
                       <li className="flex items-center gap-3">
@@ -154,8 +160,8 @@ export default async function TrainingDetailPage({ params }: any) {
                           <Clock className="text-[#0039F0]" size={20} />
                         </div>
                         <div>
-                          <span className="text-gray-500 text-sm">Durée</span>
-                          <p className="text-gray-800 font-medium">2-5 jours</p>
+                          <span className="text-gray-500 text-sm">{t.trainings.durationLabel}</span>
+                          <p className="text-gray-800 font-medium">{t.trainings.durationValue}</p>
                         </div>
                       </li>
                       <li className="flex items-center gap-3">
@@ -163,8 +169,8 @@ export default async function TrainingDetailPage({ params }: any) {
                           <Users className="text-[#0039F0]" size={20} />
                         </div>
                         <div>
-                          <span className="text-gray-500 text-sm">Participants</span>
-                          <p className="text-gray-800 font-medium">15 maximum</p>
+                          <span className="text-gray-500 text-sm">{t.trainings.participants}</span>
+                          <p className="text-gray-800 font-medium">{t.trainings.maxParticipants}</p>
                         </div>
                       </li>
                       <li className="flex items-center gap-3">
@@ -172,8 +178,8 @@ export default async function TrainingDetailPage({ params }: any) {
                           <Calendar className="text-[#0039F0]" size={20} />
                         </div>
                         <div>
-                          <span className="text-gray-500 text-sm">Prochaine session</span>
-                          <p className="text-gray-800 font-medium">Sur demande</p>
+                          <span className="text-gray-500 text-sm">{t.trainings.nextSessionLabel}</span>
+                          <p className="text-gray-800 font-medium">{t.trainings.nextSessionValue}</p>
                         </div>
                       </li>
                       <li className="flex items-center gap-3">
@@ -181,28 +187,34 @@ export default async function TrainingDetailPage({ params }: any) {
                           <MapPin className="text-[#0039F0]" size={20} />
                         </div>
                         <div>
-                          <span className="text-gray-500 text-sm">Lieu</span>
-                          <p className="text-gray-800 font-medium">En présentiel ou à distance</p>
+                          <span className="text-gray-500 text-sm">{t.trainings.locationLabel}</span>
+                          <p className="text-gray-800 font-medium">{t.trainings.locationValue}</p>
                         </div>
                       </li>
                     </ul>
                   </div>
 
                   <div className="bg-gray-50 p-6 rounded-lg">
-                    <h3 className="text-lg font-bold text-gray-800 mb-2">Prix</h3>
-                    <p className="text-gray-700 text-sm mb-4">{training.price || 'Sur demande'}</p>
+                    <h3 className="text-lg font-bold text-gray-800 mb-2">{t.common.price}</h3>
+                    <p className="text-gray-700 text-sm mb-4">{training.price || t.common.onDemand}</p>
                     <div className="space-y-3">
-                      <Link
-                        href="/contact"
-                        className="flex items-center justify-center w-full py-3 px-6 bg-[#0039F0] hover:bg-[#0030cc] text-white font-medium rounded-lg transition-colors"
-                      >
-                        S&apos;inscrire à cette formation
-                      </Link>
+                      <RegisterButton
+                        locale={locale}
+                        trainingName={training.name ?? ""}
+                        trainingImage={
+                          trainingDomain.image &&
+                            typeof trainingDomain.image !== 'number' &&
+                            trainingDomain.image.filename
+                            ? process.env.NEXT_PUBLIC_CLOUDFLARE_PUB_URL + trainingDomain.image.filename
+                            : undefined
+                        }
+                        buttonText={t.trainings.registerButton}
+                      />
                       <Link
                         href="/contact"
                         className="flex items-center justify-center w-full py-3 px-6 border border-gray-300 hover:border-[#0039F0] text-gray-800 hover:text-[#0039F0] font-medium rounded-lg transition-colors"
                       >
-                        Demander plus d&apos;informations
+                        {t.trainings.requestInfoButton}
                       </Link>
                     </div>
                   </div>
@@ -215,7 +227,7 @@ export default async function TrainingDetailPage({ params }: any) {
           {trainingDomain.trainings && trainingDomain.trainings.length > 1 && (
             <div className="mt-12 mb-8">
               <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                Autres formations dans ce domaine
+                {t.trainings.otherTrainingsTitle}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {trainingDomain.trainings
@@ -234,7 +246,7 @@ export default async function TrainingDetailPage({ params }: any) {
                         href={`/domaine-de-formation/${domainId}/formations/${relatedTraining.id}`}
                         className="text-[#0039F0] hover:underline text-sm font-medium"
                       >
-                        Voir les détails
+                        {t.trainings.viewDetails}
                       </Link>
                     </div>
                   ))}
@@ -248,13 +260,12 @@ export default async function TrainingDetailPage({ params }: any) {
     console.error('Error loading training details:', error)
     return (
       <div className="container mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Une erreur est survenue</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">{t.common.errorTitle}</h1>
         <p className="text-gray-600 mb-6">
-          Nous n&apos;avons pas pu charger les détails de cette formation. Veuillez réessayer plus
-          tard.
+          {t.trainings.errorLoadingTraining} {t.common.tryAgainLater}
         </p>
-        <Link href="/formations" className="text-[#0039F0] hover:underline">
-          Retour à la liste des formations
+        <Link href="/domaine-de-formation" className="text-[#0039F0] hover:underline">
+          {t.trainings.backToDomainList}
         </Link>
       </div>
     )

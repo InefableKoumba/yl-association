@@ -10,6 +10,7 @@ export const Media: CollectionConfig = {
       name: 'alt',
       type: 'text',
       required: false,
+      localized: true,
     },
   ],
   upload: true,

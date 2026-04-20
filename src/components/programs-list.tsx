@@ -3,12 +3,15 @@ import config from '@payload-config'
 import React from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { getLocale } from '@/lib/i18n'
 
 export default async function ProgramsList() {
+  const locale = await getLocale()
   try {
     const payload = await getPayload({ config })
     const programs = await payload.find({
       collection: 'programs',
+      locale: locale as any,
     })
 
     return (

@@ -1,6 +1,8 @@
-import React from 'react'
 import { Calendar, Clock, MapPin } from 'lucide-react'
 import Image from 'next/image'
+import { getPayload } from 'payload'
+import config from '@payload-config'
+import { Locale, translations } from '@/lib/translations'
 
 interface Event {
   id: string
@@ -49,16 +51,38 @@ const defaultEvents: Event[] = [
   },
 ]
 
-export default function UpcomingEvents({ events = defaultEvents }: { events?: Event[] }) {
+export default async function UpcomingEvents({ locale }: { locale: Locale }) {
+  const t = translations[locale]
+  let events: any[] = []
+
+  try {
+    const payload = await getPayload({ config })
+    const eventsData = await payload.find({
+      collection: 'events',
+      locale: locale as any,
+      where: {
+        date: {
+          greater_than_equal: new Date().toISOString(),
+        }
+      },
+      sort: 'date',
+      limit: 3,
+    })
+    events = eventsData.docs
+  } catch (error) {
+    console.error('Error fetching events:', error)
+  }
+
+  if (events.length === 0) return null
+
   return (
     <section className="px-4 md:px-8 xl:px-32 py-24 bg-gray-50">
       <div className="text-center mb-16">
         <h2 className="text-3xl md:text-5xl text-gray-800 font-extrabold mb-4">
-          Événements à Venir
+          {t.common.upcomingEvents}
         </h2>
         <p className="text-gray-600 md:w-2/3 mx-auto">
-          Rejoignez-nous pour nos prochains événements et formations. Une occasion unique de
-          développer vos compétences et d&apos;élargir votre réseau professionnel.
+          {t.common.upcomingEventsDescription}
         </p>
       </div>
 
@@ -94,10 +118,10 @@ export default function UpcomingEvents({ events = defaultEvents }: { events?: Ev
               <p className="text-gray-700 mb-6">{event.description}</p>
 
               <a
-                href={event.registrationLink}
+                href={event.registrationLink || '#'}
                 className="block w-full bg-[#0039F0] hover:bg-[#0030cc] transition-colors duration-300 text-white font-medium py-2 px-4 rounded-full text-center"
               >
-                S&apos;inscrire
+                {t.common.register}
               </a>
             </div>
           </div>
@@ -106,10 +130,10 @@ export default function UpcomingEvents({ events = defaultEvents }: { events?: Ev
 
       <div className="mt-12 text-center">
         <a
-          href="/events"
+          href="/evenements"
           className="inline-flex items-center text-[#0039F0] font-medium hover:underline"
         >
-          Voir tous les événements
+          {t.common.viewAllEvents}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-5 w-5 ml-1"
