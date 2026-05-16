@@ -6,16 +6,30 @@ import { getLocale } from '@/lib/i18n'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
-export const metadata: Metadata = {
-  title: 'Young Leaders | Site officiel',
-  description:
-    'Young Leaders est une association qui accompagne les jeunes dans leur développement personnel et professionnel.',
-  icons: {
-    icon: '/favicons/favicon.ico',
-    shortcut: '/favicons/favicon-32x32.png',
-    apple: '/favicons/apple-touch-icon.png',
-  },
-  manifest: '/favicons/site.webmanifest',
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale()
+  try {
+    const payload = await getPayload({ config })
+    const siteSettings = await payload.findGlobal({
+      slug: 'site-settings',
+      locale: locale as any,
+    })
+
+    const seo = siteSettings?.seo
+
+    return {
+      title: seo?.metaTitle || 'Young Leaders Association',
+      description: seo?.metaDescription || 'Développement du leadership et des compétences des jeunes au Congo.',
+      openGraph: seo?.ogImage && typeof seo.ogImage !== 'number' ? {
+        images: [{ url: seo.ogImage.url || '' }],
+      } : undefined,
+    }
+  } catch (error) {
+    return {
+      title: 'Young Leaders Association',
+      description: 'Développement du leadership et des compétences des jeunes au Congo.',
+    }
+  }
 }
 
 export const dynamic = 'force-dynamic'
@@ -25,18 +39,33 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const locale = await getLocale()
   const payload = await getPayload({ config })
   const siteSettings = await payload.findGlobal({
     slug: 'site-settings',
+    locale: locale as any,
   })
-  const locale = await getLocale()
+
+  const dictionary = await payload.findGlobal({
+    slug: 'dictionary',
+    locale: locale as any,
+  })
 
   return (
     <html lang={locale}>
       <body className="bg-gray-50">
-        <Navbar />
-        <div className="pt-24 md:pt-28">{children}</div>
-        <Footer socialLinks={siteSettings?.socialLinks} />
+        <Navbar 
+          locale={locale as any} 
+          navigation={siteSettings?.navigation} 
+          dictionary={dictionary} 
+        />
+        <main>{children}</main>
+        <Footer 
+          socialLinks={siteSettings?.socialLinks} 
+          description={siteSettings?.footer?.description} 
+          missionStatement={siteSettings?.footer?.missionStatement}
+          dictionary={dictionary}
+        />
       </body>
     </html>
   )

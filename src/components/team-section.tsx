@@ -5,41 +5,19 @@ interface TeamMember {
   name: string
   role: string
   bio: string
-  image: string
+  image: string | { url: string }
 }
 
-const defaultTeamMembers: TeamMember[] = [
-  {
-    name: 'Émilie Durand',
-    role: 'Présidente',
-    bio: "Experte en leadership et développement personnel avec plus de 10 ans d'expérience dans la formation des jeunes talents.",
-    image: '/team/team-1.jpg',
-  },
-  {
-    name: 'Alexandre Martin',
-    role: 'Directeur des Programmes',
-    bio: "Spécialiste en élaboration de programmes éducatifs innovants, passionné par l'impact social et le développement des compétences.",
-    image: '/team/team-2.jpg',
-  },
-  {
-    name: 'Sophie Berger',
-    role: 'Responsable de Formation',
-    bio: 'Coach certifiée spécialisée dans le leadership transformationnel et le mentorat des jeunes professionnels.',
-    image: '/team/team-3.jpg',
-  },
-  {
-    name: 'Thomas Laurent',
-    role: 'Directeur des Partenariats',
-    bio: "Expert en développement de partenariats stratégiques avec plus de 8 ans d'expérience dans le secteur associatif et entrepreneurial.",
-    image: '/team/team-4.jpg',
-  },
-]
-
 export default function TeamSection({
-  teamMembers = defaultTeamMembers,
+  teamMembers,
 }: {
-  teamMembers?: TeamMember[]
+  teamMembers?: TeamMember[] | null
 }) {
+  // If no team members are provided by Payload, hide the entire section
+  if (!teamMembers || teamMembers.length === 0) {
+    return null
+  }
+
   return (
     <section className="px-4 md:px-8 xl:px-32 py-24 bg-gray-50">
       <div className="text-center mb-16">
@@ -57,7 +35,12 @@ export default function TeamSection({
             className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
           >
             <div className="relative h-64 w-full">
-              <Image src={member.image} alt={member.name} fill className="object-cover" />
+              <Image 
+                src={typeof member.image === 'string' ? member.image : member.image.url} 
+                alt={member.name} 
+                fill 
+                className="object-cover" 
+              />
             </div>
             <div className="p-6">
               <h3 className="font-bold text-xl text-gray-800">{member.name}</h3>

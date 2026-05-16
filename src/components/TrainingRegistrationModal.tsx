@@ -11,6 +11,7 @@ interface RegistrationModalProps {
   locale: Locale
   trainingName: string
   trainingImage?: string
+  dictionary?: any
 }
 
 export default function TrainingRegistrationModal({
@@ -19,8 +20,10 @@ export default function TrainingRegistrationModal({
   locale,
   trainingName,
   trainingImage,
+  dictionary,
 }: RegistrationModalProps) {
   const t = translations[locale]
+  const d = dictionary?.forms
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
@@ -69,7 +72,7 @@ export default function TrainingRegistrationModal({
           setIsSubmitted(false)
           onClose()
         }}
-        title={t.trainings.successTitle}
+        title={d?.successTitle || t.trainings.successTitle}
       >
         <div className="p-8 text-center">
           <div className="flex justify-center mb-6">
@@ -78,10 +81,10 @@ export default function TrainingRegistrationModal({
             </div>
           </div>
           <h3 className="text-xl font-bold text-gray-800 mb-2">
-            {t.trainings.successTitle}
+            {d?.successTitle || t.trainings.successTitle}
           </h3>
           <p className="text-gray-600 mb-8">
-            {t.trainings.successMessage}
+            {d?.successMessage || t.trainings.successMessage}
           </p>
           <button
             onClick={() => {
@@ -123,7 +126,7 @@ export default function TrainingRegistrationModal({
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label htmlFor="reg-name" className="block text-sm font-medium text-gray-700 mb-1">
-              {t.contact.fullName}
+              {d?.fullName || t.contact.fullName}
             </label>
             <input
               required
@@ -139,7 +142,7 @@ export default function TrainingRegistrationModal({
 
           <div>
             <label htmlFor="reg-email" className="block text-sm font-medium text-gray-700 mb-1">
-              {t.contact.contactInfo}
+              {d?.email || t.contact.contactInfo}
             </label>
             <input
               required
@@ -155,7 +158,7 @@ export default function TrainingRegistrationModal({
 
           <div>
             <label htmlFor="reg-phone" className="block text-sm font-medium text-gray-700 mb-1">
-              {t.contact.phone}
+              {d?.phone || t.contact.phone}
             </label>
             <input
               required
@@ -171,7 +174,7 @@ export default function TrainingRegistrationModal({
 
           <div>
             <label htmlFor="reg-gender" className="block text-sm font-medium text-gray-700 mb-1">
-              {t.trainings.gender}
+              {d?.gender || t.trainings.gender}
             </label>
             <select
               required
@@ -190,7 +193,7 @@ export default function TrainingRegistrationModal({
 
           {status === 'error' && (
             <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl text-sm">
-              {locale === 'fr' ? 'Une erreur est survenue lors de l\'envoi. Veuillez réessayer.' : 'An error occurred during submission. Please try again.'}
+              {d?.errorMessage || (locale === 'fr' ? 'Une erreur est survenue lors de l\'envoi. Veuillez réessayer.' : 'An error occurred during submission. Please try again.')}
             </div>
           )}
 
@@ -201,7 +204,7 @@ export default function TrainingRegistrationModal({
               status === 'loading' ? 'opacity-70 cursor-not-allowed' : ''
             }`}
           >
-            {status === 'loading' ? (locale === 'fr' ? 'Envoi en cours...' : 'Registering...') : t.common.register}
+            {status === 'loading' ? (d?.sending || (locale === 'fr' ? 'Envoi en cours...' : 'Registering...')) : (d?.send || t.common.register)}
           </button>
         </form>
       </div>

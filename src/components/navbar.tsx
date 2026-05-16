@@ -6,11 +6,23 @@ import { usePathname } from 'next/navigation'
 import React, { useState, useEffect } from 'react'
 import { COOKIE_NAME, DEFAULT_LOCALE, translations, Locale } from '@/lib/translations'
 
-export default function Navbar() {
+interface NavLink {
+  label: string
+  url: string
+}
+
+interface NavbarProps {
+  locale: Locale
+  navigation?: NavLink[] | null
+  dictionary?: any
+}
+
+export default function Navbar({ locale, navigation, dictionary }: NavbarProps) {
   const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [currentLocale, setCurrentLocale] = useState<Locale>(DEFAULT_LOCALE)
+  const [currentLocale, setCurrentLocale] = useState<Locale>(locale || DEFAULT_LOCALE)
+  const d = dictionary?.common
 
   // Initialize locale from cookie
   useEffect(() => {
@@ -60,11 +72,12 @@ export default function Navbar() {
     }
   }, [isMenuOpen])
 
-  const navLinks = [
+  const navLinks = navigation || [
     { href: '/', label: t.nav.home },
     { href: '/a-propos', label: t.nav.about },
     { href: '/domaine-de-formation', label: t.nav.trainings },
     { href: '/programmes', label: t.nav.programs },
+    { href: '/blog', label: currentLocale === 'fr' ? 'Blog' : 'Blog' },
   ]
 
   return (
@@ -75,9 +88,9 @@ export default function Navbar() {
         className={`bg-[#0039F0] transition-all duration-300 text-white py-2 px-4 text-center text-sm font-medium ${scrolled ? 'py-2' : 'py-4'
           }`}
       >
-        {t.nav.donate}
+        {d?.learnMore || t.nav.donate}
         <Link href="/faire-un-don" className="ml-2 underline hover:text-white/90 transition-colors">
-          {t.nav.donateButton} &rarr;
+          {d?.register || t.nav.donateButton} &rarr;
         </Link>
       </div>
       <div className="max-w-7xl mx-auto px-4 md:px-8 xl:px-10 flex justify-between items-center">
@@ -96,11 +109,11 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center space-x-8">
-          {navLinks.map((link) => (
+          {navLinks.map((link: any) => (
             <Link
-              key={link.href}
-              href={link.href}
-              className={`text-gray-700 hover:text-[#0039F0] transition-colors duration-200 font-medium ${pathname === link.href ? 'text-[#0039F0] font-semibold' : ''
+              key={link.url || link.href}
+              href={link.url || link.href}
+              className={`text-gray-700 hover:text-[#0039F0] transition-colors duration-200 font-medium ${pathname === (link.url || link.href) ? 'text-[#0039F0] font-semibold' : ''
                 }`}
             >
               {link.label}
@@ -137,10 +150,10 @@ export default function Navbar() {
           </div>
 
           <a
-            href="#contact"
+            href="/contact"
             className="inline-flex items-center bg-[#0039F0] hover:bg-[#0030cc] text-white transition-all duration-300 font-bold py-2.5 px-6 rounded-full shadow-md hover:shadow-lg active:scale-95"
           >
-            <Phone className="mr-2" size={16} /> {t.nav.contact}
+            <Phone className="mr-2" size={16} /> {d?.contactUs || t.nav.contact}
           </a>
         </div>
 
@@ -167,11 +180,11 @@ export default function Navbar() {
         style={{ height: isMenuOpen ? 'calc(100vh - 72px)' : '0' }}
       >
         <div className="px-4 py-6 space-y-5">
-          {navLinks.map((link) => (
+          {navLinks.map((link: any) => (
             <Link
-              key={link.href}
-              href={link.href}
-              className={`block py-3 text-gray-700 hover:text-[#0039F0] text-lg font-medium border-b border-gray-100 ${pathname === link.href ? 'text-[#0039F0] font-semibold' : ''
+              key={link.url || link.href}
+              href={link.url || link.href}
+              className={`block py-3 text-gray-700 hover:text-[#0039F0] text-lg font-medium border-b border-gray-100 ${pathname === (link.url || link.href) ? 'text-[#0039F0] font-semibold' : ''
                 }`}
               onClick={() => setIsMenuOpen(false)}
             >
@@ -180,7 +193,7 @@ export default function Navbar() {
           ))}
 
           <div className="pt-6 mt-4 flex flex-col space-y-4">
-            <p className="text-sm text-gray-500 font-medium">{t.nav.contact}</p>
+            <p className="text-sm text-gray-500 font-medium">{d?.contactUs || t.nav.contact}</p>
 
             <div className="flex items-center gap-4 py-2">
               <button
@@ -209,11 +222,11 @@ export default function Navbar() {
 
 
             <a
-              href="#contact"
+              href="/contact"
               className="inline-flex items-center justify-center bg-[#0039F0] hover:bg-[#0030cc] text-white transition-colors duration-300 font-medium py-3 px-5 rounded-lg mt-4"
               onClick={() => setIsMenuOpen(false)}
             >
-              <Phone className="mr-2" size={18} /> {t.nav.contact}
+              <Phone className="mr-2" size={18} /> {d?.contactUs || t.nav.contact}
             </a>
           </div>
         </div>

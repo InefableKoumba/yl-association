@@ -4,10 +4,13 @@ import { translations, Locale } from '@/lib/translations'
 
 interface ContactFormProps {
   locale: Locale
+  dictionary?: any
 }
 
-export default function ContactForm({ locale }: ContactFormProps) {
+export default function ContactForm({ locale, dictionary }: ContactFormProps) {
   const t = translations[locale]
+  const d = dictionary?.forms
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -56,8 +59,8 @@ export default function ContactForm({ locale }: ContactFormProps) {
 
       {status === 'success' ? (
         <div className="bg-green-50 border border-green-200 text-green-700 p-6 rounded-xl text-center mb-6">
-          <h3 className="font-bold mb-2 text-lg">{t.trainings.successTitle}</h3>
-          <p>{locale === 'fr' ? 'Votre message a été envoyé avec succès. Nous vous répondrons bientôt.' : 'Your message has been sent successfully. We will get back to you soon.'}</p>
+          <h3 className="font-bold mb-2 text-lg">{d?.successTitle || t.trainings.successTitle}</h3>
+          <p>{d?.successMessage || (locale === 'fr' ? 'Votre message a été envoyé avec succès. Nous vous répondrons bientôt.' : 'Your message has been sent successfully. We will get back to you soon.')}</p>
           <button 
             onClick={() => setStatus('idle')}
             className="mt-4 text-green-800 font-semibold underline"
@@ -69,13 +72,13 @@ export default function ContactForm({ locale }: ContactFormProps) {
         <form onSubmit={handleSubmit} className="space-y-6">
           {status === 'error' && (
             <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg text-sm">
-              {locale === 'fr' ? 'Une erreur est survenue. Veuillez réessayer.' : 'An error occurred. Please try again.'}
+              {d?.errorMessage || (locale === 'fr' ? 'Une erreur est survenue. Veuillez réessayer.' : 'An error occurred. Please try again.')}
             </div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                {t.contact.fullName}
+                {d?.fullName || t.contact.fullName}
               </label>
               <input
                 id="name"
@@ -90,7 +93,7 @@ export default function ContactForm({ locale }: ContactFormProps) {
             </div>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email
+                {d?.email || 'Email'}
               </label>
               <input
                 id="email"
@@ -107,7 +110,7 @@ export default function ContactForm({ locale }: ContactFormProps) {
 
           <div>
             <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-1">
-              {t.contact.subject}
+              {d?.subject || t.contact.subject}
             </label>
             <input
               id="subject"
@@ -122,7 +125,7 @@ export default function ContactForm({ locale }: ContactFormProps) {
 
           <div>
             <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-              {t.contact.message}
+              {d?.message || t.contact.message}
             </label>
             <textarea
               id="message"
@@ -166,7 +169,7 @@ export default function ContactForm({ locale }: ContactFormProps) {
                 status === 'loading' ? 'opacity-70 cursor-not-allowed' : ''
               }`}
             >
-              {status === 'loading' ? (locale === 'fr' ? 'Envoi en cours...' : 'Sending...') : t.contact.sendButton}
+              {status === 'loading' ? (d?.sending || (locale === 'fr' ? 'Envoi en cours...' : 'Sending...')) : (d?.send || t.contact.sendButton)}
             </button>
           </div>
         </form>

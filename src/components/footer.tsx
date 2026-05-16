@@ -10,10 +10,14 @@ interface FooterProps {
     linkedin?: string | null
     youtube?: string | null
   } | null
+  description?: string | null
+  missionStatement?: string | null
+  dictionary?: any
 }
 
-export default function Footer({ socialLinks }: FooterProps) {
+export default function Footer({ socialLinks, description, missionStatement, dictionary }: FooterProps) {
   const [currentLocale, setCurrentLocale] = useState<Locale>(DEFAULT_LOCALE)
+  const d = dictionary?.newsletter
 
   // Initialize locale from cookie
   useEffect(() => {
@@ -34,11 +38,11 @@ export default function Footer({ socialLinks }: FooterProps) {
             <div className="mb-6">
               <h3 className="text-xl font-bold mb-1">Young Leaders</h3>
               <p className="text-gray-400 text-sm">
-                {t.footer.associationDescription}
+                {description || t.footer.associationDescription}
               </p>
             </div>
             <p className="text-gray-300 mb-6">
-              {t.footer.missionStatement}
+              {missionStatement || t.footer.missionStatement}
             </p>
             <div className="flex gap-4">
               {socialLinks?.facebook && (
@@ -178,13 +182,13 @@ export default function Footer({ socialLinks }: FooterProps) {
                   body: JSON.stringify({ email }),
                 });
                 if (res.ok) {
-                  alert(currentLocale === 'fr' ? 'Merci de votre inscription !' : 'Thank you for subscribing!');
+                  alert(d?.success || (currentLocale === 'fr' ? 'Merci de votre inscription !' : 'Thank you for subscribing!'));
                   (e.target as HTMLFormElement).reset();
                 } else {
                   throw new Error();
                 }
               } catch (err) {
-                alert(currentLocale === 'fr' ? 'Une erreur est survenue.' : 'An error occurred.');
+                alert(d?.error || (currentLocale === 'fr' ? 'Une erreur est survenue.' : 'An error occurred.'));
               } finally {
                 if (button) button.disabled = false;
               }
@@ -194,7 +198,7 @@ export default function Footer({ socialLinks }: FooterProps) {
                   id="newsletter-email"
                   name="newsletter-email"
                   type="email"
-                  placeholder={t.footer.emailPlaceholder}
+                  placeholder={d?.placeholder || t.footer.emailPlaceholder}
                   className="w-full bg-gray-800 border border-gray-700 rounded-lg py-3 px-4 text-gray-100 focus:outline-none focus:border-[#0039F0]"
                   required
                 />

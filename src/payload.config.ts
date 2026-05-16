@@ -25,6 +25,10 @@ import {
   ProgramsConfig,
 } from './globals/pages'
 import { SiteSettings } from './globals/site-settings'
+import { Team } from './collections/Team'
+import { Blog } from './collections/Blog'
+import { Dictionary } from './globals/dictionary'
+import { DonationPage } from './globals/pages'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -58,7 +62,7 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { fr, en },
   },
-  collections: [Users, Media, TrainingDomains, Partners, FAQ, Programs],
+  collections: [Users, Media, TrainingDomains, Partners, FAQ, Programs, Team, Blog],
   globals: [
     HomeConfig,
     AboutConfig,
@@ -67,6 +71,8 @@ export default buildConfig({
     FaqConfig,
     ProgramsConfig,
     SiteSettings,
+    DonationPage,
+    Dictionary,
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
@@ -78,6 +84,7 @@ export default buildConfig({
       url: process.env.DATABASE_URI || '',
       authToken: process.env.DATABASE_AUTH_TOKEN || '',
     },
+    push: false
   }),
   sharp,
   plugins: [

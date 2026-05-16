@@ -28,6 +28,11 @@ export default async function TrainingDetailPage({ params }: any) {
       locale: locale as any,
     })
 
+    const dictionary = await payload.findGlobal({
+      slug: 'dictionary',
+      locale: locale as any,
+    })
+
     // Find the specific training in the domain's trainings array
     const training = trainingDomain?.trainings?.find((t: any) => t.id === trainingId)
 
@@ -200,6 +205,7 @@ export default async function TrainingDetailPage({ params }: any) {
                     <div className="space-y-3">
                       <RegisterButton
                         locale={locale}
+                        dictionary={dictionary}
                         trainingName={training.name ?? ""}
                         trainingImage={
                           trainingDomain.image &&

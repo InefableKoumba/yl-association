@@ -24,6 +24,17 @@ export default async function Page() {
       slug: 'homePage',
       locale: locale as any,
     })
+
+    const siteSettings = await payload.findGlobal({
+      slug: 'site-settings',
+      locale: locale as any,
+    })
+
+    const teamMembers = await payload.find({
+      collection: 'team',
+      sort: 'order',
+      locale: locale as any,
+    })
     const heroImages = []
     if (pageGlobal?.heroSection?.heroImages && pageGlobal.heroSection.heroImages.length > 0) {
       for (const image of pageGlobal.heroSection.heroImages) {
@@ -183,7 +194,7 @@ export default async function Page() {
 
         <AboutUsSection aboutUsData={pageGlobal?.aboutUsSection} />
 
-        <TeamSection />
+        <TeamSection teamMembers={teamMembers.docs as any} />
 
         <Testimonials
           locale={locale}
@@ -279,15 +290,15 @@ export default async function Page() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="bg-white p-4 rounded-lg shadow-sm">
                     <h3 className="font-bold text-gray-800 mb-2 text-lg">Téléphone</h3>
-                    <p className="text-gray-600">+33 (0)1 23 45 67 89</p>
+                    <p className="text-gray-600">{siteSettings?.contactInfo?.phone || '+33 (0)1 23 45 67 89'}</p>
                   </div>
                   <div className="bg-white p-4 rounded-lg shadow-sm">
                     <h3 className="font-bold text-gray-800 mb-2 text-lg">Email</h3>
-                    <p className="text-gray-600">contact@yl-association.org</p>
+                    <p className="text-gray-600">{siteSettings?.contactInfo?.email || 'contact@yl-association.org'}</p>
                   </div>
                   <div className="bg-white p-4 rounded-lg shadow-sm md:col-span-2">
                     <h3 className="font-bold text-gray-800 mb-2 text-lg">Adresse</h3>
-                    <p className="text-gray-600">10 Rue de la Liberté, 75001 Paris, France</p>
+                    <p className="text-gray-600">{siteSettings?.contactInfo?.address || '10 Rue de la Liberté, 75001 Paris, France'}</p>
                   </div>
                 </div>
               </div>

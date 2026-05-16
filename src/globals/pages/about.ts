@@ -65,4 +65,16 @@ export const aboutPageFields: Field[] = [
       },
     ],
   },
+  {
+    name: 'joinMissionTitle',
+    type: 'text',
+    label: 'Titre "Rejoignez notre mission"',
+    localized: true,
+  },
+  {
+    name: 'joinMissionDescription',
+    type: 'textarea',
+    label: 'Description "Rejoignez notre mission"',
+    localized: true,
+  },
 ]

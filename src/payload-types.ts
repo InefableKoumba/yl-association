@@ -73,6 +73,8 @@ export interface Config {
     partners: Partner;
     faq: Faq;
     programs: Program;
+    team: Team;
+    blog: Blog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -86,6 +88,8 @@ export interface Config {
     partners: PartnersSelect<false> | PartnersSelect<true>;
     faq: FaqSelect<false> | FaqSelect<true>;
     programs: ProgramsSelect<false> | ProgramsSelect<true>;
+    team: TeamSelect<false> | TeamSelect<true>;
+    blog: BlogSelect<false> | BlogSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -103,6 +107,8 @@ export interface Config {
     faqPage: FaqPage;
     programsPage: ProgramsPage;
     'site-settings': SiteSetting;
+    donationPage: DonationPage;
+    dictionary: Dictionary;
   };
   globalsSelect: {
     homePage: HomePageSelect<false> | HomePageSelect<true>;
@@ -112,6 +118,8 @@ export interface Config {
     faqPage: FaqPageSelect<false> | FaqPageSelect<true>;
     programsPage: ProgramsPageSelect<false> | ProgramsPageSelect<true>;
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+    donationPage: DonationPageSelect<false> | DonationPageSelect<true>;
+    dictionary: DictionarySelect<false> | DictionarySelect<true>;
   };
   locale: 'en' | 'fr';
   widgets: {
@@ -278,6 +286,59 @@ export interface Program {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team".
+ */
+export interface Team {
+  id: number;
+  name: string;
+  role: string;
+  bio: string;
+  image: number | Media;
+  /**
+   * Plus le nombre est petit, plus le membre apparaît en premier
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog".
+ */
+export interface Blog {
+  id: number;
+  title: string;
+  /**
+   * URL unique de l'article (ex: mon-article-passionnant)
+   */
+  slug: string;
+  featuredImage: number | Media;
+  /**
+   * Court texte affiché dans la liste des articles
+   */
+  excerpt?: string | null;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  author?: string | null;
+  publishedDate: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -323,6 +384,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'programs';
         value: number | Program;
+      } | null)
+    | ({
+        relationTo: 'team';
+        value: number | Team;
+      } | null)
+    | ({
+        relationTo: 'blog';
+        value: number | Blog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -462,6 +531,34 @@ export interface ProgramsSelect<T extends boolean = true> {
   registrationLink?: T;
   isRegistrationAvailable?: T;
   maximumParticipants?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team_select".
+ */
+export interface TeamSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  bio?: T;
+  image?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blog_select".
+ */
+export interface BlogSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  featuredImage?: T;
+  excerpt?: T;
+  content?: T;
+  author?: T;
+  publishedDate?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -682,6 +779,8 @@ export interface AboutPage {
         id?: string | null;
       }[]
     | null;
+  joinMissionTitle?: string | null;
+  joinMissionDescription?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -751,12 +850,114 @@ export interface ProgramsPage {
  */
 export interface SiteSetting {
   id: number;
+  navigation?:
+    | {
+        label: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  contactInfo?: {
+    phone?: string | null;
+    email?: string | null;
+    address?: string | null;
+    openingHours?: string | null;
+  };
+  footer?: {
+    description?: string | null;
+    missionStatement?: string | null;
+  };
   donationExternalUrl: string;
   socialLinks?: {
     facebook?: string | null;
     instagram?: string | null;
     linkedin?: string | null;
     youtube?: string | null;
+  };
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "donationPage".
+ */
+export interface DonationPage {
+  id: number;
+  hero?: {
+    title?: string | null;
+    subtitle?: string | null;
+    cta?: string | null;
+  };
+  impact?: {
+    title?: string | null;
+    tiers?:
+      | {
+          title?: string | null;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  faq?: {
+    title?: string | null;
+    questions?:
+      | {
+          question?: string | null;
+          answer?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  help?: {
+    title?: string | null;
+    description?: string | null;
+    cta?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dictionary".
+ */
+export interface Dictionary {
+  id: number;
+  common?: {
+    learnMore?: string | null;
+    register?: string | null;
+    contactUs?: string | null;
+    search?: string | null;
+    submit?: string | null;
+    loading?: string | null;
+  };
+  trainings?: {
+    duration?: string | null;
+    location?: string | null;
+    price?: string | null;
+    upcoming?: string | null;
+  };
+  forms?: {
+    fullName?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    subject?: string | null;
+    message?: string | null;
+    gender?: string | null;
+    send?: string | null;
+    sending?: string | null;
+    successTitle?: string | null;
+    successMessage?: string | null;
+    errorMessage?: string | null;
+  };
+  newsletter?: {
+    success?: string | null;
+    error?: string | null;
+    placeholder?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -923,6 +1124,8 @@ export interface AboutPageSelect<T extends boolean = true> {
         image?: T;
         id?: T;
       };
+  joinMissionTitle?: T;
+  joinMissionDescription?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -992,6 +1195,27 @@ export interface ProgramsPageSelect<T extends boolean = true> {
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
+  navigation?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  contactInfo?:
+    | T
+    | {
+        phone?: T;
+        email?: T;
+        address?: T;
+        openingHours?: T;
+      };
+  footer?:
+    | T
+    | {
+        description?: T;
+        missionStatement?: T;
+      };
   donationExternalUrl?: T;
   socialLinks?:
     | T
@@ -1000,6 +1224,109 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         instagram?: T;
         linkedin?: T;
         youtube?: T;
+      };
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "donationPage_select".
+ */
+export interface DonationPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        title?: T;
+        subtitle?: T;
+        cta?: T;
+      };
+  impact?:
+    | T
+    | {
+        title?: T;
+        tiers?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  faq?:
+    | T
+    | {
+        title?: T;
+        questions?:
+          | T
+          | {
+              question?: T;
+              answer?: T;
+              id?: T;
+            };
+      };
+  help?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        cta?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dictionary_select".
+ */
+export interface DictionarySelect<T extends boolean = true> {
+  common?:
+    | T
+    | {
+        learnMore?: T;
+        register?: T;
+        contactUs?: T;
+        search?: T;
+        submit?: T;
+        loading?: T;
+      };
+  trainings?:
+    | T
+    | {
+        duration?: T;
+        location?: T;
+        price?: T;
+        upcoming?: T;
+      };
+  forms?:
+    | T
+    | {
+        fullName?: T;
+        email?: T;
+        phone?: T;
+        subject?: T;
+        message?: T;
+        gender?: T;
+        send?: T;
+        sending?: T;
+        successTitle?: T;
+        successMessage?: T;
+        errorMessage?: T;
+      };
+  newsletter?:
+    | T
+    | {
+        success?: T;
+        error?: T;
+        placeholder?: T;
       };
   updatedAt?: T;
   createdAt?: T;

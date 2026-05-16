@@ -18,6 +18,18 @@ export default async function ContactPage() {
       locale: locale as any,
     })
 
+    const siteSettings = await payload.findGlobal({
+      slug: 'site-settings',
+      locale: locale as any,
+    })
+
+    const dictionary = await payload.findGlobal({
+      slug: 'dictionary',
+      locale: locale as any,
+    })
+
+    const contact = siteSettings?.contactInfo
+
     return (
       <div className="min-h-screen bg-gray-50">
         {/* Hero Section */}
@@ -62,7 +74,7 @@ export default async function ContactPage() {
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 mb-16">
               {/* Contact Form - Reusing form from home page */}
               <div className="lg:col-span-3">
-                <ContactForm locale={locale as Locale} />
+                <ContactForm locale={locale as Locale} dictionary={dictionary} />
               </div>
 
               {/* Contact Information */}
@@ -77,7 +89,7 @@ export default async function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-800 mb-1">{t.common.phone}</h3>
-                        <p className="text-gray-600">{t.common.officePhone}</p>
+                        <p className="text-gray-600">{contact?.phone || t.common.officePhone}</p>
                       </div>
                     </div>
 
@@ -87,7 +99,7 @@ export default async function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-800 mb-1">{t.common.email}</h3>
-                        <p className="text-gray-600">{t.common.officeEmail}</p>
+                        <p className="text-gray-600">{contact?.email || t.common.officeEmail}</p>
                       </div>
                     </div>
 
@@ -97,7 +109,7 @@ export default async function ContactPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold text-gray-800 mb-1">{t.contact.address}</h3>
-                        <p className="text-gray-600">{t.common.officeAddress}</p>
+                        <p className="text-gray-600 whitespace-pre-wrap">{contact?.address || t.common.officeAddress}</p>
                         <a
                           href="https://maps.google.com"
                           target="_blank"
@@ -117,24 +129,20 @@ export default async function ContactPage() {
                         <h3 className="font-semibold text-gray-800 mb-1">
                           {t.contact.openingHours}
                         </h3>
-                        <p className="text-gray-600">{t.common.mondayFriday}: 9h00 - 18h00</p>
-                        <p className="text-gray-600">{t.common.saturdaySunday}: {t.common.closed}</p>
+                        {contact?.openingHours ? (
+                          <p className="text-gray-600 whitespace-pre-wrap">{contact.openingHours}</p>
+                        ) : (
+                          <>
+                            <p className="text-gray-600">{t.common.mondayFriday}: 9h00 - 18h00</p>
+                            <p className="text-gray-600">{t.common.saturdaySunday}: {t.common.closed}</p>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* <div className="bg-white rounded-2xl shadow-sm p-6 overflow-hidden mb-16">
-              <h2 className="text-2xl font-bold text-gray-800 mb-6">{t.common.findUs}</h2>
-              <div className="aspect-video w-full rounded-lg overflow-hidden bg-gray-200">
-               
-                <div className="w-full h-full flex items-center justify-center">
-                  <p className="text-gray-500">{t.common.interactiveMap}</p>
-                </div>
-              </div>
-            </div> */}
 
             {/* FAQ Section */}
             <div className="text-center">

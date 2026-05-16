@@ -9,11 +9,23 @@ import { translations, Locale } from '@/lib/translations'
 interface DonateFormProps {
     locale: Locale
     externalUrl?: string | null
+    data?: any
 }
 
-export default function DonateForm({ locale, externalUrl }: DonateFormProps) {
+export default function DonateForm({ locale, externalUrl, data }: DonateFormProps) {
     const t = translations[locale].donate
     const url = externalUrl || '#'
+
+    const heroTitle = data?.hero?.title || t.hero.title
+    const heroSubtitle = data?.hero?.subtitle || t.hero.subtitle
+    const heroCta = data?.hero?.cta || t.hero.cta
+
+    const impactTitle = data?.impact?.title || t.impact.title
+    const impactTiers = data?.impact?.tiers || [
+        { title: t.impact.tier1.title, description: t.impact.tier1.description },
+        { title: t.impact.tier2.title, description: t.impact.tier2.description },
+        { title: t.impact.tier3.title, description: t.impact.tier3.description },
+    ]
 
     const handleRedirect = () => {
         window.open(url, '_blank', 'noopener,noreferrer')
@@ -35,10 +47,10 @@ export default function DonateForm({ locale, externalUrl }: DonateFormProps) {
                             <span className="text-sm font-bold uppercase tracking-wider">{locale === 'fr' ? 'Soutenez notre mission' : 'Support our mission'}</span>
                         </div>
                         <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight">
-                            {t.hero.title}
+                            {heroTitle}
                         </h1>
                         <p className="text-xl md:text-2xl opacity-90 mb-10 leading-relaxed font-medium">
-                            {t.hero.subtitle}
+                            {heroSubtitle}
                         </p>
                     </div>
                 </div>
@@ -53,45 +65,31 @@ export default function DonateForm({ locale, externalUrl }: DonateFormProps) {
                         <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 md:p-12">
                             <h2 className="text-3xl font-extrabold text-gray-900 mb-8 flex items-center">
                                 <Zap className="text-[#0039F0] mr-3" size={32} />
-                                {t.impact.title}
+                                {impactTitle}
                             </h2>
                             
                             <div className="grid grid-cols-1 gap-8">
-                                <div className="flex items-start space-x-5 p-6 rounded-2xl bg-blue-50 transition-all hover:bg-blue-100/50">
-                                    <div className="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-blue-600/20">
-                                        <Check className="text-white" size={28} />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-blue-900 mb-2">{t.impact.tier1.title}</h3>
-                                        <p className="text-blue-800/70 leading-relaxed">
-                                            {t.impact.tier1.description}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start space-x-5 p-6 rounded-2xl bg-emerald-50 transition-all hover:bg-emerald-100/50">
-                                    <div className="w-14 h-14 rounded-2xl bg-emerald-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-emerald-600/20">
-                                        <Check className="text-white" size={28} />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-emerald-900 mb-2">{t.impact.tier2.title}</h3>
-                                        <p className="text-emerald-800/70 leading-relaxed">
-                                            {t.impact.tier2.description}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start space-x-5 p-6 rounded-2xl bg-amber-50 transition-all hover:bg-amber-100/50">
-                                    <div className="w-14 h-14 rounded-2xl bg-amber-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-600/20">
-                                        <Check className="text-white" size={28} />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-amber-900 mb-2">{t.impact.tier3.title}</h3>
-                                        <p className="text-amber-800/70 leading-relaxed">
-                                            {t.impact.tier3.description}
-                                        </p>
-                                    </div>
-                                </div>
+                                {impactTiers.map((tier: any, index: number) => {
+                                    const colors = [
+                                        { bg: 'bg-blue-50', hover: 'hover:bg-blue-100/50', iconBg: 'bg-blue-600', iconShadow: 'shadow-blue-600/20', text: 'text-blue-900', desc: 'text-blue-800/70' },
+                                        { bg: 'bg-emerald-50', hover: 'hover:bg-emerald-100/50', iconBg: 'bg-emerald-600', iconShadow: 'shadow-emerald-600/20', text: 'text-emerald-900', desc: 'text-emerald-800/70' },
+                                        { bg: 'bg-amber-50', hover: 'hover:bg-amber-100/50', iconBg: 'bg-amber-600', iconShadow: 'shadow-amber-600/20', text: 'text-amber-900', desc: 'text-amber-800/70' }
+                                    ][index % 3]
+                                    
+                                    return (
+                                        <div key={index} className={`flex items-start space-x-5 p-6 rounded-2xl ${colors.bg} transition-all ${colors.hover}`}>
+                                            <div className={`w-14 h-14 rounded-2xl ${colors.iconBg} flex items-center justify-center flex-shrink-0 shadow-lg ${colors.iconShadow}`}>
+                                                <Check className="text-white" size={28} />
+                                            </div>
+                                            <div>
+                                                <h3 className={`text-xl font-bold ${colors.text} mb-2`}>{tier.title}</h3>
+                                                <p className={`${colors.desc} leading-relaxed`}>
+                                                    {tier.description}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
                             </div>
                         </div>
                     </div>
@@ -115,7 +113,7 @@ export default function DonateForm({ locale, externalUrl }: DonateFormProps) {
                                 onClick={handleRedirect}
                                 className="w-full group bg-[#0039F0] hover:bg-[#0030cc] text-white font-black py-5 px-8 rounded-2xl transition-all duration-300 flex items-center justify-center space-x-3 shadow-xl shadow-blue-900/20 active:scale-95"
                             >
-                                <span className="text-lg">{t.hero.cta}</span>
+                                <span className="text-lg">{heroCta}</span>
                                 <ExternalLink size={20} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                             </button>
 
@@ -148,15 +146,15 @@ export default function DonateForm({ locale, externalUrl }: DonateFormProps) {
             {/* Help Section */}
             <section className="bg-gray-50 py-20 border-t border-gray-100">
                 <div className="container mx-auto px-4 text-center">
-                    <h2 className="text-3xl font-black text-gray-900 mb-4">{t.help.title}</h2>
+                    <h2 className="text-3xl font-black text-gray-900 mb-4">{data?.help?.title || t.help.title}</h2>
                     <p className="text-gray-600 mb-10 max-w-2xl mx-auto">
-                        {t.help.description}
+                        {data?.help?.description || t.help.description}
                     </p>
                     <Link
                         href="/contact"
                         className="inline-flex items-center justify-center py-4 px-10 bg-white border-2 border-[#0039F0] text-[#0039F0] hover:bg-[#0039F0] hover:text-white transition-all duration-300 font-bold rounded-2xl shadow-sm hover:shadow-lg"
                     >
-                        {t.help.cta}
+                        {data?.help?.cta || t.help.cta}
                     </Link>
                 </div>
             </section>

@@ -139,16 +139,16 @@ export default async function AboutUsPage() {
           {/* CTA Section */}
           <div className="mt-20 bg-gray-100 rounded-xl p-8 md:p-12 text-center">
             <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-              {t.about.joinOurMission}
+              {pageGlobal?.joinMissionTitle || t.about.joinOurMission}
             </h3>
             <p className="text-gray-600 max-w-2xl mx-auto mb-8">
-              {t.about.contactUsDescription}
+              {pageGlobal?.joinMissionDescription || t.about.contactUsDescription}
             </p>
             <Link
               href="/contact"
               className="inline-flex items-center justify-center bg-[#0039F0] hover:bg-[#0030cc] transition-colors duration-300 text-white font-semibold py-3 px-8 rounded-full"
             >
-              {t.common.contactUs}
+              {pageGlobal?.heroButtonText || t.common.contactUs}
             </Link>
           </div>
         </section>

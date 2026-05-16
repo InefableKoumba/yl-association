@@ -8,6 +8,7 @@ interface RegisterButtonProps {
   trainingName: string
   trainingImage?: string
   buttonText: string
+  dictionary?: any
 }
 
 export default function RegisterButton({
@@ -15,6 +16,7 @@ export default function RegisterButton({
   trainingName,
   trainingImage,
   buttonText,
+  dictionary,
 }: RegisterButtonProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
@@ -33,6 +35,7 @@ export default function RegisterButton({
         locale={locale}
         trainingName={trainingName}
         trainingImage={trainingImage}
+        dictionary={dictionary}
       />
     </>
   )
