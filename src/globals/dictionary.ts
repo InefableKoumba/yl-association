@@ -2,8 +2,14 @@ import type { GlobalConfig } from 'payload'
 
 export const Dictionary: GlobalConfig = {
   slug: 'dictionary',
+  label: 'Textes de l’interface',
   access: {
     read: () => true,
+  },
+  admin: {
+    group: 'Configuration',
+    description:
+      'Libellés courts réutilisés sur tout le site (formulaires, boutons…). Laissez vide pour garder le texte par défaut.',
   },
   fields: [
     {

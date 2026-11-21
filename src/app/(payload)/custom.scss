@@ -1,0 +1,204 @@
+// Young Leaders — admin theme
+// Primary brand color: #0039F0
+
+:root {
+  --yl-primary: #0039f0;
+  --yl-primary-600: #002fc7;
+  --yl-primary-50: #eef2ff;
+  --yl-ink: #0b1233;
+  --font-body: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+// Primary buttons use the brand blue
+.btn--style-primary {
+  --bg-color: var(--yl-primary);
+  --hover-bg: var(--yl-primary-600);
+  --color: #fff;
+  --hover-color: #fff;
+  background-color: var(--yl-primary);
+  color: #fff;
+
+  &:hover:not(:disabled),
+  &:focus-visible {
+    background-color: var(--yl-primary-600);
+  }
+}
+
+// Login / auth screens
+.template-minimal {
+  background:
+    radial-gradient(60rem 40rem at 10% -10%, rgba(0, 57, 240, 0.18), transparent 60%),
+    radial-gradient(40rem 30rem at 110% 110%, rgba(0, 57, 240, 0.12), transparent 60%),
+    var(--theme-bg);
+}
+
+.yl-admin-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  img {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+  }
+
+  strong {
+    display: block;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    color: var(--theme-text);
+  }
+
+  span {
+    display: block;
+    font-size: 13px;
+    color: var(--theme-elevation-500);
+  }
+}
+
+// Sidebar: active link accent
+.nav__link.active,
+.nav__link:has(.nav__link-indicator) {
+  color: var(--yl-primary);
+}
+.nav__link-indicator {
+  background: var(--yl-primary);
+}
+
+// ---------- Dashboard ----------
+.yl-dash {
+  margin-bottom: 40px;
+
+  &__hero {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 32px;
+    border-radius: 20px;
+    color: #fff;
+    background:
+      radial-gradient(30rem 18rem at 100% 0%, rgba(255, 255, 255, 0.18), transparent 60%),
+      linear-gradient(135deg, var(--yl-primary) 0%, #0b2bb0 60%, var(--yl-ink) 100%);
+
+    h1 {
+      margin: 4px 0 8px;
+      color: #fff;
+      font-size: 34px;
+      letter-spacing: -0.03em;
+    }
+
+    p {
+      margin: 0;
+      max-width: 560px;
+      color: rgba(255, 255, 255, 0.8);
+    }
+  }
+
+  &__eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  &__site {
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--yl-primary) !important;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--yl-primary-50);
+    }
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+    margin: 16px 0 32px;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 18px 20px;
+    border-radius: 16px;
+    border: 1px solid var(--theme-elevation-100);
+    background: var(--theme-elevation-0);
+    text-decoration: none;
+    transition:
+      border-color 0.2s,
+      transform 0.2s;
+
+    &:hover {
+      border-color: var(--yl-primary);
+      transform: translateY(-2px);
+    }
+  }
+
+  &__stat-value {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--theme-text);
+  }
+
+  &__stat-label {
+    font-size: 13px;
+    color: var(--theme-elevation-500);
+  }
+
+  &__title {
+    font-size: 18px;
+    margin: 0 0 12px;
+  }
+
+  &__actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+  }
+
+  &__action {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: var(--theme-elevation-50);
+    text-decoration: none;
+    transition:
+      background 0.2s,
+      color 0.2s;
+
+    &:hover {
+      background: var(--yl-primary);
+
+      .yl-dash__action-label,
+      .yl-dash__action-hint {
+        color: #fff;
+      }
+    }
+  }
+
+  &__action-hint {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--theme-elevation-500);
+  }
+
+  &__action-label {
+    font-weight: 600;
+    color: var(--theme-text);
+  }
+}

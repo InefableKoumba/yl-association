@@ -1,45 +1,53 @@
-import { MailtrapClient } from "mailtrap";
+import 'server-only'
+import { MailtrapClient } from 'mailtrap'
 
-const TOKEN = process.env.MAILTRAP_API_KEY!;
-const SENDER_EMAIL = process.env.MAILTRAP_SENDER_EMAIL!;
-const SENDER_NAME = process.env.MAILTRAP_SENDER_NAME!;
+let client: MailtrapClient | null = null
 
-const client = new MailtrapClient({
-  token: TOKEN,
-});
+/** Created lazily so a missing API key doesn't crash builds or unrelated routes. */
+function getClient() {
+  const token = process.env.MAILTRAP_API_KEY
+  if (!token) throw new Error('MAILTRAP_API_KEY is not set')
+  client ??= new MailtrapClient({ token })
+  return client
+}
 
-export const sendMail = async ({
+const sender = () => ({
+  email: process.env.MAILTRAP_SENDER_EMAIL || 'info@yl-association.org',
+  name: process.env.MAILTRAP_SENDER_NAME || 'Young Leaders Association',
+})
+
+export const receiver = () => process.env.EMAIL_RECEIVER || 'contact@yl-association.org'
+
+export async function sendMail({
   to,
   subject,
   text,
   html,
+  replyTo,
 }: {
   to: string
   subject: string
   text: string
   html?: string
-}) => {
+  replyTo?: string
+}) {
   try {
-    const result = await client.send({
-      from: {
-        email: SENDER_EMAIL,
-        name: SENDER_NAME,
-      },
+    const result = await getClient().send({
+      from: sender(),
       to: [{ email: to }],
-      subject: subject,
-      text: text,
-      html: html,
-    });
-
-    console.log('Email sent successfully via Mailtrap:', result.message_ids);
-    return { success: true, messageId: result.message_ids?.[0] };
+      subject,
+      text,
+      html,
+      ...(replyTo ? { reply_to: { email: replyTo } } : {}),
+    })
+    return { success: true as const, messageId: result.message_ids?.[0] }
   } catch (error) {
-    console.error('Mailtrap Error:', error);
-    return { success: false, error };
+    console.error('Mailtrap error:', error)
+    return { success: false as const, error }
   }
 }
 
-export const sendBatchMail = async ({
+export async function sendBatchMail({
   subject,
   text,
   requests,
@@ -47,24 +55,18 @@ export const sendBatchMail = async ({
   subject: string
   text: string
   requests: { email: string; name?: string; custom_variables?: Record<string, string> }[]
-}) => {
+}) {
   try {
-    const result = await client.batchSend({
-      base: {
-        from: { email: SENDER_EMAIL, name: SENDER_NAME },
-        subject: subject,
-        text: text,
-      },
-      requests: requests.map(req => ({
+    await getClient().batchSend({
+      base: { from: sender(), subject, text },
+      requests: requests.map((req) => ({
         to: [{ email: req.email, name: req.name }],
         custom_variables: req.custom_variables,
       })),
-    });
-
-    console.log('Batch email sent successfully via Mailtrap');
-    return { success: true };
+    })
+    return { success: true as const }
   } catch (error) {
-    console.error('Mailtrap Batch Error:', error);
-    return { success: false, error };
+    console.error('Mailtrap batch error:', error)
+    return { success: false as const, error }
   }
 }

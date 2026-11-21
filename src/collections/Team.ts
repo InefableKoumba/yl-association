@@ -1,27 +1,42 @@
 import type { CollectionConfig } from 'payload'
+import { anyone, authenticated } from '../access'
 
 export const Team: CollectionConfig = {
   slug: 'team',
+  labels: {
+    singular: "Membre de l'équipe",
+    plural: 'Équipe',
+  },
   access: {
-    read: () => true,
+    read: anyone,
+    create: authenticated,
+    update: authenticated,
+    delete: authenticated,
   },
   admin: {
+    group: 'Contenu',
     useAsTitle: 'name',
-    defaultColumns: ['name', 'role', 'updatedAt'],
+    defaultColumns: ['name', 'role', 'order', 'updatedAt'],
   },
+  defaultSort: 'order',
   fields: [
     {
-      name: 'name',
-      type: 'text',
-      required: true,
-      label: 'Nom complet',
-    },
-    {
-      name: 'role',
-      type: 'text',
-      required: true,
-      label: 'Rôle / Fonction',
-      localized: true,
+      type: 'row',
+      fields: [
+        {
+          name: 'name',
+          type: 'text',
+          required: true,
+          label: 'Nom complet',
+        },
+        {
+          name: 'role',
+          type: 'text',
+          required: true,
+          label: 'Rôle / Fonction',
+          localized: true,
+        },
+      ],
     },
     {
       name: 'bio',
@@ -42,6 +57,7 @@ export const Team: CollectionConfig = {
       type: 'number',
       label: "Ordre d'affichage",
       admin: {
+        position: 'sidebar',
         description: 'Plus le nombre est petit, plus le membre apparaît en premier',
       },
     },

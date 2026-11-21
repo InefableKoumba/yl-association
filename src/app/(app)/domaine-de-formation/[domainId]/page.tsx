@@ -1,147 +1,79 @@
-import React from 'react'
-import { getPayload } from 'payload'
-import config from '@payload-config'
+import { ArrowUpRight, Clock, Users } from 'lucide-react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
-import { GraduationCap, ArrowRight } from 'lucide-react'
-import { getLocale } from '@/lib/i18n'
-import { Locale, translations } from '@/lib/translations'
+import { notFound } from 'next/navigation'
+import { ButtonLink } from '@/components/ui/Button'
+import { PageHero } from '@/components/ui/PageHero'
+import { Stagger, StaggerItem } from '@/components/ui/Reveal'
+import { SectionHeader } from '@/components/ui/SectionHeader'
+import { fmt, getLocale, translations } from '@/lib/i18n'
+import { mediaPosition, mediaUrl } from '@/lib/media'
+import { getDomain } from '@/lib/queries'
 
-interface PageParams {
-  params: {
-    domainId: string
-  }
+type Props = { params: Promise<{ domainId: string }> }
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const domain = await getDomain((await params).domainId)
+  return domain ? { title: domain.name ?? undefined, description: domain.description ?? undefined } : {}
 }
 
-export default async function TrainingDomainPage({ params }: any) {
-  const locale = await getLocale() as Locale
+export default async function DomainPage({ params }: Props) {
+  const { domainId } = await params
+  const locale = await getLocale()
   const t = translations[locale]
-  try {
-    const { domainId } = await params
-    const payload = await getPayload({ config })
+  const domain = await getDomain(domainId)
+  if (!domain) notFound()
+  const trainings = domain.trainings ?? []
 
-    // Fetch the training domain
-    const trainingDomain = await payload.findByID({
-      collection: 'trainingDomains',
-      id: domainId,
-      locale: locale as any,
-    })
-
-    if (!trainingDomain) {
-      return (
-        <div className="container mx-auto px-4 py-12 text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-4">{t.trainings.domainNotFoundTitle}</h1>
-          <p className="text-gray-600 mb-6">
-            {t.trainings.domainNotFoundDescription}
-          </p>
-          <Link href="/domaine-de-formation" className="text-[#0039F0] hover:underline">
-            {t.trainings.backToDomainList}
+  return (
+    <>
+      <PageHero
+        eyebrow={
+          <Link href="/domaine-de-formation" className="hover:text-white">
+            {t.nav.trainings} / {t.trainings.domainTitle}
           </Link>
-        </div>
-      )
-    }
-
-    return (
-      <div className="bg-gray-50 min-h-screen px-4 xl:px-24">
-        <div className="container mx-auto px-4 xl:px-8 py-12">
-          {/* Breadcrumb */}
-          <div className="mb-8">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Link href="/domaine-de-formation" className="hover:text-[#0039F0]">
-                {t.nav.trainings}
-              </Link>
-              <span>•</span>
-              <span className="text-[#0039F0] font-medium">{trainingDomain.name}</span>
-            </div>
-          </div>
-
-          {/* Hero Section */}
-          <div className="relative h-[300px] md:h-[400px] rounded-xl overflow-hidden mb-12">
-            <Image
-              src={
-                trainingDomain.image &&
-                  typeof trainingDomain.image !== 'number' &&
-                  trainingDomain.image.filename
-                  ? process.env.NEXT_PUBLIC_CLOUDFLARE_PUB_URL + trainingDomain.image.filename
-                  : '/hero2.jpg'
-              }
-              alt={trainingDomain.name || 'Domaine de formation'}
-              fill
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
-            <div className="absolute bottom-0 left-0 w-full p-8 text-white">
-              <div className="flex items-center gap-2 mb-2">
-                <div className="p-2 rounded-full bg-white/10">
-                  <GraduationCap className="text-white" size={20} />
-                </div>
-                <span className="text-white/80 font-medium">{t.trainings.domainTitle}</span>
-              </div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">{trainingDomain.name}</h1>
-              <p className="text-white/80">
-                {trainingDomain.trainings?.length || 0} {locale === 'fr' ? 'formation' : 'training'}
-                {trainingDomain.trainings?.length !== 1 ? 's' : ''} {locale === 'fr' ? 'disponible' : 'available'}
-                {trainingDomain.trainings?.length !== 1 ? (locale === 'fr' ? 's' : '') : ''}
-              </p>
-            </div>
-          </div>
-
-          {/* Trainings List */}
-          <div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">
-              {t.trainings.ourTrainingsInDomain}
-            </h2>
-
-            {trainingDomain.trainings && trainingDomain.trainings.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {trainingDomain.trainings.map((training: any) => (
-                  <div
-                    key={training.id}
-                    className="bg-white border border-gray-100 rounded-lg shadow-sm hover:shadow-md transition-shadow p-6"
-                  >
-                    <h3 className="font-bold text-gray-800 mb-3 text-xl">{training.name}</h3>
-                    <p className="text-gray-600 text-sm mb-6 line-clamp-3">
-                      {training.shortDescription}
-                    </p>
-                    {training.price && (
-                      <div className="mb-4">
-                        <span className="text-sm font-semibold text-gray-700">{t.common.price}:</span>
-                        <span className="ml-2 text-gray-700 text-sm">{training.price}</span>
-                      </div>
-                    )}
-                    <Link
-                      href={`/domaine-de-formation/${domainId}/formations/${training.id}`}
-                      className="flex items-center justify-center gap-2 w-full py-3 px-4 font-medium bg-gray-50 hover:bg-[#0039F0] text-gray-800 hover:text-white transition-colors duration-300 rounded-lg mt-auto"
-                    >
-                      <span>{t.trainings.viewDetails}</span>
-                      <ArrowRight size={16} />
+        }
+        title={domain.name || t.trainings.domainTitle}
+        description={domain.description || fmt(t.ui.trainingCount, { count: trainings.length })}
+        image={mediaUrl(domain.image, '/hero2.jpg')}
+        imagePosition={mediaPosition(domain.image)}
+        size="sm"
+      />
+      <section className="section-y">
+        <div className="container-page">
+          <SectionHeader title={t.trainings.ourTrainingsInDomain} description={fmt(t.ui.trainingCount, { count: trainings.length })} />
+          {trainings.length ? (
+            <Stagger className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {trainings.map((tr, i) => (
+                <StaggerItem key={tr.id} as="article" className="group relative flex h-full flex-col rounded-[var(--radius-card)] border border-ink-200/80 bg-white p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-primary-200 hover:shadow-[var(--shadow-lift)]">
+                  <span className="font-display text-sm font-semibold text-primary-600">{String(i + 1).padStart(2, '0')}</span>
+                  <h3 className="text-h3 mt-6">
+                    <Link href={`/domaine-de-formation/${domain.id}/formations/${tr.id}`} className="after:absolute after:inset-0">
+                      {tr.name}
                     </Link>
+                  </h3>
+                  {tr.shortDescription && <p className="mt-3 line-clamp-4 text-sm text-ink-500">{tr.shortDescription}</p>}
+                  <div className="mt-6 flex flex-wrap gap-2 text-xs font-medium text-ink-600">
+                    {tr.duration && <span className="inline-flex items-center gap-1 rounded-full bg-ink-100 px-3 py-1"><Clock className="size-3.5" />{tr.duration}</span>}
+                    {tr.participants && <span className="inline-flex items-center gap-1 rounded-full bg-ink-100 px-3 py-1"><Users className="size-3.5" />{tr.participants}</span>}
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <p className="text-gray-600">
-                  {t.trainings.noTrainingsInDomain}
-                </p>
-              </div>
-            )}
+                  <div className="mt-auto flex items-center justify-between border-t border-ink-100 pt-5 mt-6">
+                    <span className="text-sm font-semibold text-ink-900">{tr.price || t.common.onDemand}</span>
+                    <span className="grid size-10 place-items-center rounded-full bg-primary-50 text-primary-600 transition group-hover:bg-primary-600 group-hover:text-white">
+                      <ArrowUpRight className="size-4" />
+                    </span>
+                  </div>
+                </StaggerItem>
+              ))}
+            </Stagger>
+          ) : (
+            <p className="py-12 text-center text-ink-500">{t.trainings.noTrainingsInDomain}</p>
+          )}
+          <div className="mt-14">
+            <ButtonLink href="/domaine-de-formation" variant="outline">← {t.trainings.backToDomainList}</ButtonLink>
           </div>
         </div>
-      </div>
-    )
-  } catch (error) {
-    console.error('Error loading training domain:', error)
-    return (
-      <div className="container mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">{t.common.errorTitle}</h1>
-        <p className="text-gray-600 mb-6">
-          {t.trainings.errorLoadingDomain} {t.common.tryAgainLater}
-        </p>
-        <Link href="/domaine-de-formation" className="text-[#0039F0] hover:underline">
-          {t.trainings.backToDomainList}
-        </Link>
-      </div>
-    )
-  }
+      </section>
+    </>
+  )
 }

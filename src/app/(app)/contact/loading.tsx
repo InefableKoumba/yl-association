@@ -1,5 +1,5 @@
-import SimpleLoader from '@/components/ui/SimpleLoader'
+import PageSkeleton from '@/components/ui/PageSkeleton'
 
 export default function Loading() {
-  return <SimpleLoader />
+  return <PageSkeleton />
 }

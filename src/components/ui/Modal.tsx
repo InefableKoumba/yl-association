@@ -1,64 +1,85 @@
 'use client'
-import React, { useEffect, useRef } from 'react'
+import { AnimatePresence, motion } from 'motion/react'
 import { X } from 'lucide-react'
+import { useEffect, useId, useRef, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 
 interface ModalProps {
   isOpen: boolean
   onClose: () => void
   title?: string
-  children: React.ReactNode
+  closeLabel?: string
+  children: ReactNode
 }
 
-export default function Modal({ isOpen, onClose, title, children }: ModalProps) {
-  const modalRef = useRef<HTMLDivElement>(null)
+export default function Modal({ isOpen, onClose, title, closeLabel = 'Fermer', children }: ModalProps) {
+  const titleId = useId()
+  const dialogRef = useRef<HTMLDivElement>(null)
+  const onCloseRef = useRef(onClose)
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
 
   useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
+    if (!isOpen) return
+    const previouslyFocused = document.activeElement as HTMLElement | null
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCloseRef.current()
     }
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-      window.addEventListener('keydown', handleEscape)
-    } else {
-      document.body.style.overflow = ''
-    }
+    const { overflow } = document.body.style
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKey)
+    requestAnimationFrame(() => dialogRef.current?.focus())
     return () => {
-      document.body.style.overflow = ''
-      window.removeEventListener('keydown', handleEscape)
+      document.body.style.overflow = overflow
+      window.removeEventListener('keydown', handleKey)
+      previouslyFocused?.focus?.()
     }
-  }, [isOpen, onClose])
+  }, [isOpen])
 
-  if (!isOpen) return null
+  if (typeof document === 'undefined') return null
 
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      {/* Backdrop */}
-      <div 
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity"
-        onClick={onClose}
-      ></div>
-      
-      {/* Modal Content */}
-      <div 
-        ref={modalRef}
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in duration-200"
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
-          <h2 className="text-xl font-bold text-gray-800">{title}</h2>
-          <button 
+  return createPortal(
+    <AnimatePresence>
+      {isOpen && (
+        <div className="fixed inset-0 z-[100] flex items-end justify-center p-0 sm:items-center sm:p-6">
+          <motion.div
+            className="absolute inset-0 bg-ink-950/60 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-500"
+          />
+          <motion.div
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={title ? titleId : undefined}
+            tabIndex={-1}
+            initial={{ opacity: 0, y: 40, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 24, scale: 0.98 }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="relative flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-t-[2rem] bg-white shadow-2xl outline-none sm:rounded-[2rem]"
           >
-            <X size={20} />
-          </button>
+            <div className="flex items-center justify-between gap-4 border-b border-ink-100 px-6 py-5">
+              <h2 id={titleId} className="text-h3">
+                {title}
+              </h2>
+              <button
+                type="button"
+                onClick={onClose}
+                aria-label={closeLabel}
+                className="grid size-10 place-items-center rounded-full text-ink-500 transition-colors hover:bg-ink-100 hover:text-ink-900"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+            <div className="overflow-y-auto">{children}</div>
+          </motion.div>
         </div>
-        
-        {/* Body */}
-        <div className="max-h-[80vh] overflow-y-auto">
-          {children}
-        </div>
-      </div>
-    </div>
+      )}
+    </AnimatePresence>,
+    document.body,
   )
 }

@@ -67,14 +67,15 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    users: User;
-    media: Media;
-    trainingDomains: TrainingDomain;
-    partners: Partner;
-    faq: Faq;
-    programs: Program;
-    team: Team;
     blog: Blog;
+    programs: Program;
+    trainingDomains: TrainingDomain;
+    faq: Faq;
+    team: Team;
+    partners: Partner;
+    media: Media;
+    pages: Page;
+    users: User;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,14 +83,15 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    users: UsersSelect<false> | UsersSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
-    trainingDomains: TrainingDomainsSelect<false> | TrainingDomainsSelect<true>;
-    partners: PartnersSelect<false> | PartnersSelect<true>;
-    faq: FaqSelect<false> | FaqSelect<true>;
-    programs: ProgramsSelect<false> | ProgramsSelect<true>;
-    team: TeamSelect<false> | TeamSelect<true>;
     blog: BlogSelect<false> | BlogSelect<true>;
+    programs: ProgramsSelect<false> | ProgramsSelect<true>;
+    trainingDomains: TrainingDomainsSelect<false> | TrainingDomainsSelect<true>;
+    faq: FaqSelect<false> | FaqSelect<true>;
+    team: TeamSelect<false> | TeamSelect<true>;
+    partners: PartnersSelect<false> | PartnersSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -98,30 +100,32 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'fr') | ('en' | 'fr')[];
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('fr' | 'en') | ('fr' | 'en')[];
   globals: {
     homePage: HomePage;
     aboutPage: AboutPage;
     trainingsPage: TrainingsPage;
+    programsPage: ProgramsPage;
+    blogPage: BlogPage;
     contactPage: ContactPage;
     faqPage: FaqPage;
-    programsPage: ProgramsPage;
-    'site-settings': SiteSetting;
     donationPage: DonationPage;
+    'site-settings': SiteSetting;
     dictionary: Dictionary;
   };
   globalsSelect: {
     homePage: HomePageSelect<false> | HomePageSelect<true>;
     aboutPage: AboutPageSelect<false> | AboutPageSelect<true>;
     trainingsPage: TrainingsPageSelect<false> | TrainingsPageSelect<true>;
+    programsPage: ProgramsPageSelect<false> | ProgramsPageSelect<true>;
+    blogPage: BlogPageSelect<false> | BlogPageSelect<true>;
     contactPage: ContactPageSelect<false> | ContactPageSelect<true>;
     faqPage: FaqPageSelect<false> | FaqPageSelect<true>;
-    programsPage: ProgramsPageSelect<false> | ProgramsPageSelect<true>;
-    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     donationPage: DonationPageSelect<false> | DonationPageSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     dictionary: DictionarySelect<false> | DictionarySelect<true>;
   };
-  locale: 'en' | 'fr';
+  locale: 'fr' | 'en';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -150,36 +154,55 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Articles et actualités. Enregistrez un brouillon puis publiez quand il est prêt.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
+ * via the `definition` "blog".
  */
-export interface User {
+export interface Blog {
   id: number;
+  title: string;
+  featuredImage: number | Media;
+  /**
+   * Court texte affiché dans la liste des articles et dans les moteurs de recherche.
+   */
+  excerpt?: string | null;
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Généré automatiquement depuis le titre si laissé vide. Ex : mon-article
+   */
+  slug: string;
+  author?: string | null;
+  publishedDate: string;
   updatedAt: string;
   createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
+  _status?: ('draft' | 'published') | null;
 }
 /**
+ * Images et fichiers utilisés sur le site.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
   id: number;
+  /**
+   * Décrit l'image pour l'accessibilité et le référencement (ex : « Atelier leadership à Brazzaville »).
+   */
   alt?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -194,13 +217,65 @@ export interface Media {
   focalY?: number | null;
 }
 /**
+ * Événements, conférences et ateliers. Passez le statut à « Passé » une fois terminé.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "programs".
+ */
+export interface Program {
+  id: number;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  image?: (number | null) | Media;
+  /**
+   * Affichée sur les cartes de programme.
+   */
+  shortDescription: string;
+  longDescription?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  isRegistrationAvailable?: boolean | null;
+  /**
+   * Lien externe (formulaire, billetterie…). Laissez « # » ou vide pour rediriger vers la page de contact.
+   */
+  registrationLink?: string | null;
+  maximumParticipants?: number | null;
+  gallery?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  status: 'upcoming' | 'past';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Chaque domaine regroupe plusieurs formations.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "trainingDomains".
  */
 export interface TrainingDomain {
   id: number;
   name?: string | null;
+  description?: string | null;
   image?: (number | null) | Media;
+  order?: number | null;
   trainings?:
     | {
         name?: string | null;
@@ -221,6 +296,16 @@ export interface TrainingDomain {
           [k: string]: unknown;
         } | null;
         price?: string | null;
+        duration?: string | null;
+        participants?: string | null;
+        nextSession?: string | null;
+        format?: string | null;
+        learningPoints?:
+          | {
+              point: string;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -228,18 +313,8 @@ export interface TrainingDomain {
   createdAt: string;
 }
 /**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "partners".
- */
-export interface Partner {
-  id: number;
-  name: string;
-  websiteUrl?: string | null;
-  logo?: (number | null) | Media;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
+ * Questions fréquentes affichées sur la page FAQ (et sur l’accueil si sélectionnées).
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "faq".
  */
@@ -247,40 +322,10 @@ export interface Faq {
   id: number;
   question: string;
   answer: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "programs".
- */
-export interface Program {
-  id: number;
-  title: string;
-  status: 'upcoming' | 'past';
-  date: string;
-  time: string;
-  location: string;
-  image?: (number | null) | Media;
-  shortDescription: string;
-  longDescription?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  registrationLink?: string | null;
-  isRegistrationAvailable?: boolean | null;
-  maximumParticipants?: number | null;
+  /**
+   * Plus le nombre est petit, plus la question apparaît tôt.
+   */
+  order?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -303,20 +348,30 @@ export interface Team {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "blog".
+ * via the `definition` "partners".
  */
-export interface Blog {
+export interface Partner {
+  id: number;
+  name: string;
+  /**
+   * Adresse complète, ex : https://www.exemple.org
+   */
+  websiteUrl?: string | null;
+  logo?: (number | null) | Media;
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Pages simples (mentions légales, confidentialité, conditions…) accessibles à l’adresse /slug.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "pages".
+ */
+export interface Page {
   id: number;
   title: string;
-  /**
-   * URL unique de l'article (ex: mon-article-passionnant)
-   */
-  slug: string;
-  featuredImage: number | Media;
-  /**
-   * Court texte affiché dans la liste des articles
-   */
-  excerpt?: string | null;
+  intro?: string | null;
   content: {
     root: {
       type: string;
@@ -332,10 +387,46 @@ export interface Blog {
     };
     [k: string]: unknown;
   };
-  author?: string | null;
-  publishedDate: string;
+  /**
+   * Généré automatiquement depuis le titre si laissé vide. Ex : mon-article
+   */
+  slug: string;
+  showInFooter?: boolean | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * Personnes ayant accès à l'interface d'administration.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name?: string | null;
+  /**
+   * Les éditeurs gèrent le contenu. Seuls les administrateurs gèrent les utilisateurs.
+   */
+  role: 'admin' | 'editor';
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -362,36 +453,40 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'users';
-        value: number | User;
-      } | null)
-    | ({
-        relationTo: 'media';
-        value: number | Media;
-      } | null)
-    | ({
-        relationTo: 'trainingDomains';
-        value: number | TrainingDomain;
-      } | null)
-    | ({
-        relationTo: 'partners';
-        value: number | Partner;
-      } | null)
-    | ({
-        relationTo: 'faq';
-        value: number | Faq;
+        relationTo: 'blog';
+        value: number | Blog;
       } | null)
     | ({
         relationTo: 'programs';
         value: number | Program;
       } | null)
     | ({
+        relationTo: 'trainingDomains';
+        value: number | TrainingDomain;
+      } | null)
+    | ({
+        relationTo: 'faq';
+        value: number | Faq;
+      } | null)
+    | ({
         relationTo: 'team';
         value: number | Team;
       } | null)
     | ({
-        relationTo: 'blog';
-        value: number | Blog;
+        relationTo: 'partners';
+        value: number | Partner;
+      } | null)
+    | ({
+        relationTo: 'media';
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -437,25 +532,111 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
+ * via the `definition` "blog_select".
  */
-export interface UsersSelect<T extends boolean = true> {
+export interface BlogSelect<T extends boolean = true> {
+  title?: T;
+  featuredImage?: T;
+  excerpt?: T;
+  content?: T;
+  slug?: T;
+  author?: T;
+  publishedDate?: T;
   updatedAt?: T;
   createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "programs_select".
+ */
+export interface ProgramsSelect<T extends boolean = true> {
+  title?: T;
+  date?: T;
+  time?: T;
+  location?: T;
+  image?: T;
+  shortDescription?: T;
+  longDescription?: T;
+  isRegistrationAvailable?: T;
+  registrationLink?: T;
+  maximumParticipants?: T;
+  gallery?:
     | T
     | {
+        image?: T;
         id?: T;
-        createdAt?: T;
-        expiresAt?: T;
       };
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "trainingDomains_select".
+ */
+export interface TrainingDomainsSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  image?: T;
+  order?: T;
+  trainings?:
+    | T
+    | {
+        name?: T;
+        shortDescription?: T;
+        longDescription?: T;
+        price?: T;
+        duration?: T;
+        participants?: T;
+        nextSession?: T;
+        format?: T;
+        learningPoints?:
+          | T
+          | {
+              point?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "faq_select".
+ */
+export interface FaqSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team_select".
+ */
+export interface TeamSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  bio?: T;
+  image?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners_select".
+ */
+export interface PartnersSelect<T extends boolean = true> {
+  name?: T;
+  websiteUrl?: T;
+  logo?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -477,90 +658,41 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "trainingDomains_select".
+ * via the `definition` "pages_select".
  */
-export interface TrainingDomainsSelect<T extends boolean = true> {
-  name?: T;
-  image?: T;
-  trainings?:
-    | T
-    | {
-        name?: T;
-        shortDescription?: T;
-        longDescription?: T;
-        price?: T;
-        id?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "partners_select".
- */
-export interface PartnersSelect<T extends boolean = true> {
-  name?: T;
-  websiteUrl?: T;
-  logo?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "faq_select".
- */
-export interface FaqSelect<T extends boolean = true> {
-  question?: T;
-  answer?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "programs_select".
- */
-export interface ProgramsSelect<T extends boolean = true> {
+export interface PagesSelect<T extends boolean = true> {
   title?: T;
-  status?: T;
-  date?: T;
-  time?: T;
-  location?: T;
-  image?: T;
-  shortDescription?: T;
-  longDescription?: T;
-  registrationLink?: T;
-  isRegistrationAvailable?: T;
-  maximumParticipants?: T;
+  intro?: T;
+  content?: T;
+  slug?: T;
+  showInFooter?: T;
   updatedAt?: T;
   createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "team_select".
+ * via the `definition` "users_select".
  */
-export interface TeamSelect<T extends boolean = true> {
+export interface UsersSelect<T extends boolean = true> {
   name?: T;
   role?: T;
-  bio?: T;
-  image?: T;
-  order?: T;
   updatedAt?: T;
   createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "blog_select".
- */
-export interface BlogSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  featuredImage?: T;
-  excerpt?: T;
-  content?: T;
-  author?: T;
-  publishedDate?: T;
-  updatedAt?: T;
-  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  resetPasswordRequestedAt?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -610,7 +742,7 @@ export interface HomePage {
   id: number;
   heroSection?: {
     /**
-     * Ajoutez jusqu'à 3 images pour le slider de la section héro
+     * Jusqu'à 5 images. Plusieurs images défilent automatiquement en fondu.
      */
     heroImages?:
       | {
@@ -618,31 +750,44 @@ export interface HomePage {
           id?: string | null;
         }[]
       | null;
-    heroTitle?: string | null;
     heroSubtitle?: string | null;
+    heroTitle?: string | null;
     heroDescription?: string | null;
     heroPrimaryButtonText?: string | null;
     heroPrimaryButtonLink?: string | null;
     heroSecondaryButtonText?: string | null;
     heroSecondaryButtonLink?: string | null;
     /**
-     * Statistiques affichées dans la section héro
+     * Affichés sous la bannière (ex : 425+ personnes formées).
      */
     heroStats?:
       | {
           value: string;
           label: string;
-          icon: 'users' | 'graduation' | 'calendar';
+          icon:
+            | 'users'
+            | 'graduation'
+            | 'calendar'
+            | 'target'
+            | 'rocket'
+            | 'award'
+            | 'heart'
+            | 'globe'
+            | 'lightbulb'
+            | 'handshake'
+            | 'star'
+            | 'book';
           id?: string | null;
         }[]
       | null;
   };
   missionVisionSection?: {
+    enabled?: boolean | null;
     missionTitle?: string | null;
+    visionTitle?: string | null;
     missionHeading?: string | null;
     missionDescription?: string | null;
     missionDescription2?: string | null;
-    visionTitle?: string | null;
     visionHeading?: string | null;
     visionDescription?: string | null;
     valuesTitle?: string | null;
@@ -654,7 +799,24 @@ export interface HomePage {
         }[]
       | null;
   };
+  trainingsSection?: {
+    enabled?: boolean | null;
+    ourTrainingsSectionTitle?: string | null;
+    ourTrainingsSectionDescription?: string | null;
+    /**
+     * Laissez vide pour afficher tous les domaines.
+     */
+    trainingDomainsToFeature?: (number | TrainingDomain)[] | null;
+    trainingsSectionButtonText?: string | null;
+    trainingsSectionButtonLink?: string | null;
+  };
+  programsSection?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    description?: string | null;
+  };
   aboutUsSection?: {
+    enabled?: boolean | null;
     aboutUsSectionTitle?: string | null;
     aboutUsSectionSubtitle?: string | null;
     aboutUsSectionDescription?: {
@@ -672,6 +834,32 @@ export interface HomePage {
       };
       [k: string]: unknown;
     } | null;
+    /**
+     * Cartes affichées dans la section (mission, communauté…).
+     */
+    highlights?:
+      | {
+          icon?:
+            | (
+                | 'users'
+                | 'graduation'
+                | 'calendar'
+                | 'target'
+                | 'rocket'
+                | 'award'
+                | 'heart'
+                | 'globe'
+                | 'lightbulb'
+                | 'handshake'
+                | 'star'
+                | 'book'
+              )
+            | null;
+          title: string;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
     aboutUsSectionButtonText?: string | null;
     aboutUsSectionButtonLink?: string | null;
     aboutUsSectionImages?:
@@ -695,19 +883,10 @@ export interface HomePage {
         }[]
       | null;
   };
-  partnersSection?: {
-    ourPartnersSectionTitle?: string | null;
-    ourPartnersSectionDescription?: string | null;
-    partnersToShow?: (number | Partner)[] | null;
-    showAllPartnersLink?: boolean | null;
-    allPartnersLinkText?: string | null;
-  };
-  trainingsSection?: {
-    ourTrainingsSectionTitle?: string | null;
-    ourTrainingsSectionDescription?: string | null;
-    trainingDomainsToFeature?: (number | TrainingDomain)[] | null;
-    trainingsSectionButtonText?: string | null;
-    trainingsSectionButtonLink?: string | null;
+  teamSection?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    description?: string | null;
   };
   testimonialsSection?: {
     testimonialsSectionEnabled?: boolean | null;
@@ -723,14 +902,35 @@ export interface HomePage {
         }[]
       | null;
   };
+  partnersSection?: {
+    enabled?: boolean | null;
+    ourPartnersSectionTitle?: string | null;
+    ourPartnersSectionDescription?: string | null;
+    /**
+     * Laissez vide pour afficher tous les partenaires.
+     */
+    partnersToShow?: (number | Partner)[] | null;
+    showAllPartnersLink?: boolean | null;
+    allPartnersLinkText?: string | null;
+  };
+  blogSection?: {
+    enabled?: boolean | null;
+    title?: string | null;
+    description?: string | null;
+  };
   faqSection?: {
+    enabled?: boolean | null;
     faqSectionTitle?: string | null;
     faqSectionDescription?: string | null;
+    /**
+     * Laissez vide pour afficher les 6 premières questions.
+     */
     frequentlyAskedQuestions?: (number | Faq)[] | null;
     faqSectionButtonText?: string | null;
     faqSectionButtonLink?: string | null;
   };
   contactSection?: {
+    enabled?: boolean | null;
     contactUsSectionTitle?: string | null;
     contactUsSectionDescription?: string | null;
     contactUsSectionImage?: (number | null) | Media;
@@ -771,6 +971,8 @@ export interface AboutPage {
     };
     [k: string]: unknown;
   } | null;
+  showValues?: boolean | null;
+  showTeam?: boolean | null;
   aboutUsGallerySectionTitle?: string | null;
   aboutUsGallerySectionDescription?: string | null;
   aboutUsGallerySectionImages?:
@@ -796,10 +998,44 @@ export interface TrainingsPage {
   heroButtonText?: string | null;
   trainingsSectionTitle?: string | null;
   trainingsSectionDescription?: string | null;
+  ctaTitle?: string | null;
+  ctaDescription?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "programsPage".
+ */
+export interface ProgramsPage {
+  id: number;
+  heroImage?: (number | null) | Media;
+  heroTitle?: string | null;
+  heroDescription?: string | null;
+  upcomingProgramsSectionTitle?: string | null;
+  pastProgramsSectionTitle?: string | null;
+  ctaSectionTitle?: string | null;
+  ctaSectionDescription?: string | null;
+  proposeProgramButtonText?: string | null;
+  becomeSpeakerButtonText?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blogPage".
+ */
+export interface BlogPage {
+  id: number;
+  heroImage?: (number | null) | Media;
+  heroTitle?: string | null;
+  heroDescription?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Téléphone, email, adresse et horaires : voir « Paramètres du site → Contact ».
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contactPage".
  */
@@ -827,62 +1063,8 @@ export interface FaqPage {
   createdAt?: string | null;
 }
 /**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "programsPage".
- */
-export interface ProgramsPage {
-  id: number;
-  heroImage?: (number | null) | Media;
-  heroTitle?: string | null;
-  heroDescription?: string | null;
-  upcomingProgramsSectionTitle?: string | null;
-  pastProgramsSectionTitle?: string | null;
-  ctaSectionTitle?: string | null;
-  ctaSectionDescription?: string | null;
-  proposeProgramButtonText?: string | null;
-  becomeSpeakerButtonText?: string | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "site-settings".
- */
-export interface SiteSetting {
-  id: number;
-  navigation?:
-    | {
-        label: string;
-        url: string;
-        id?: string | null;
-      }[]
-    | null;
-  contactInfo?: {
-    phone?: string | null;
-    email?: string | null;
-    address?: string | null;
-    openingHours?: string | null;
-  };
-  footer?: {
-    description?: string | null;
-    missionStatement?: string | null;
-  };
-  donationExternalUrl: string;
-  socialLinks?: {
-    facebook?: string | null;
-    instagram?: string | null;
-    linkedin?: string | null;
-    youtube?: string | null;
-  };
-  seo?: {
-    metaTitle?: string | null;
-    metaDescription?: string | null;
-    ogImage?: (number | null) | Media;
-  };
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
+ * Le lien vers la plateforme de don se règle dans « Paramètres du site → Dons ».
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "donationPage".
  */
@@ -892,6 +1074,7 @@ export interface DonationPage {
     title?: string | null;
     subtitle?: string | null;
     cta?: string | null;
+    image?: (number | null) | Media;
   };
   impact?: {
     title?: string | null;
@@ -902,6 +1085,11 @@ export interface DonationPage {
           id?: string | null;
         }[]
       | null;
+  };
+  donateCard?: {
+    title?: string | null;
+    description?: string | null;
+    notice?: string | null;
   };
   faq?: {
     title?: string | null;
@@ -922,6 +1110,70 @@ export interface DonationPage {
   createdAt?: string | null;
 }
 /**
+ * Navigation, coordonnées, réseaux sociaux et référencement pour tout le site.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  /**
+   * Laissez vide pour utiliser le menu par défaut (Accueil, À propos, Formations, Programmes, Blog).
+   */
+  navigation?:
+    | {
+        label: string;
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Petite barre bleue tout en haut du site.
+   */
+  announcement?: {
+    enabled?: boolean | null;
+    text?: string | null;
+    linkLabel?: string | null;
+    linkUrl?: string | null;
+  };
+  contactInfo?: {
+    phone?: string | null;
+    email?: string | null;
+    address?: string | null;
+    /**
+     * Optionnel. Sinon, le lien « Voir sur la carte » recherche l'adresse ci-dessus.
+     */
+    mapUrl?: string | null;
+    openingHours?: string | null;
+  };
+  footer?: {
+    description?: string | null;
+    missionStatement?: string | null;
+  };
+  /**
+   * Seuls les liens renseignés sont affichés.
+   */
+  socialLinks?: {
+    facebook?: string | null;
+    instagram?: string | null;
+    linkedin?: string | null;
+    youtube?: string | null;
+  };
+  /**
+   * Les visiteurs sont redirigés vers ce lien pour effectuer un don.
+   */
+  donationExternalUrl: string;
+  seo?: {
+    metaTitle?: string | null;
+    metaDescription?: string | null;
+    ogImage?: (number | null) | Media;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Libellés courts réutilisés sur tout le site (formulaires, boutons…). Laissez vide pour garder le texte par défaut.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "dictionary".
  */
@@ -976,8 +1228,8 @@ export interface HomePageSelect<T extends boolean = true> {
               heroImage?: T;
               id?: T;
             };
-        heroTitle?: T;
         heroSubtitle?: T;
+        heroTitle?: T;
         heroDescription?: T;
         heroPrimaryButtonText?: T;
         heroPrimaryButtonLink?: T;
@@ -995,11 +1247,12 @@ export interface HomePageSelect<T extends boolean = true> {
   missionVisionSection?:
     | T
     | {
+        enabled?: T;
         missionTitle?: T;
+        visionTitle?: T;
         missionHeading?: T;
         missionDescription?: T;
         missionDescription2?: T;
-        visionTitle?: T;
         visionHeading?: T;
         visionDescription?: T;
         valuesTitle?: T;
@@ -1011,12 +1264,38 @@ export interface HomePageSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  trainingsSection?:
+    | T
+    | {
+        enabled?: T;
+        ourTrainingsSectionTitle?: T;
+        ourTrainingsSectionDescription?: T;
+        trainingDomainsToFeature?: T;
+        trainingsSectionButtonText?: T;
+        trainingsSectionButtonLink?: T;
+      };
+  programsSection?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        description?: T;
+      };
   aboutUsSection?:
     | T
     | {
+        enabled?: T;
         aboutUsSectionTitle?: T;
         aboutUsSectionSubtitle?: T;
         aboutUsSectionDescription?: T;
+        highlights?:
+          | T
+          | {
+              icon?: T;
+              title?: T;
+              description?: T;
+              id?: T;
+            };
         aboutUsSectionButtonText?: T;
         aboutUsSectionButtonLink?: T;
         aboutUsSectionImages?:
@@ -1042,23 +1321,12 @@ export interface HomePageSelect<T extends boolean = true> {
               id?: T;
             };
       };
-  partnersSection?:
+  teamSection?:
     | T
     | {
-        ourPartnersSectionTitle?: T;
-        ourPartnersSectionDescription?: T;
-        partnersToShow?: T;
-        showAllPartnersLink?: T;
-        allPartnersLinkText?: T;
-      };
-  trainingsSection?:
-    | T
-    | {
-        ourTrainingsSectionTitle?: T;
-        ourTrainingsSectionDescription?: T;
-        trainingDomainsToFeature?: T;
-        trainingsSectionButtonText?: T;
-        trainingsSectionButtonLink?: T;
+        enabled?: T;
+        title?: T;
+        description?: T;
       };
   testimonialsSection?:
     | T
@@ -1076,9 +1344,27 @@ export interface HomePageSelect<T extends boolean = true> {
               id?: T;
             };
       };
+  partnersSection?:
+    | T
+    | {
+        enabled?: T;
+        ourPartnersSectionTitle?: T;
+        ourPartnersSectionDescription?: T;
+        partnersToShow?: T;
+        showAllPartnersLink?: T;
+        allPartnersLinkText?: T;
+      };
+  blogSection?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        description?: T;
+      };
   faqSection?:
     | T
     | {
+        enabled?: T;
         faqSectionTitle?: T;
         faqSectionDescription?: T;
         frequentlyAskedQuestions?: T;
@@ -1088,6 +1374,7 @@ export interface HomePageSelect<T extends boolean = true> {
   contactSection?:
     | T
     | {
+        enabled?: T;
         contactUsSectionTitle?: T;
         contactUsSectionDescription?: T;
         contactUsSectionImage?: T;
@@ -1116,6 +1403,8 @@ export interface AboutPageSelect<T extends boolean = true> {
   heroButtonText?: T;
   aboutUsSectionTitle?: T;
   aboutUsSectionDescription?: T;
+  showValues?: T;
+  showTeam?: T;
   aboutUsGallerySectionTitle?: T;
   aboutUsGallerySectionDescription?: T;
   aboutUsGallerySectionImages?:
@@ -1141,6 +1430,38 @@ export interface TrainingsPageSelect<T extends boolean = true> {
   heroButtonText?: T;
   trainingsSectionTitle?: T;
   trainingsSectionDescription?: T;
+  ctaTitle?: T;
+  ctaDescription?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "programsPage_select".
+ */
+export interface ProgramsPageSelect<T extends boolean = true> {
+  heroImage?: T;
+  heroTitle?: T;
+  heroDescription?: T;
+  upcomingProgramsSectionTitle?: T;
+  pastProgramsSectionTitle?: T;
+  ctaSectionTitle?: T;
+  ctaSectionDescription?: T;
+  proposeProgramButtonText?: T;
+  becomeSpeakerButtonText?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "blogPage_select".
+ */
+export interface BlogPageSelect<T extends boolean = true> {
+  heroImage?: T;
+  heroTitle?: T;
+  heroDescription?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1174,70 +1495,6 @@ export interface FaqPageSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "programsPage_select".
- */
-export interface ProgramsPageSelect<T extends boolean = true> {
-  heroImage?: T;
-  heroTitle?: T;
-  heroDescription?: T;
-  upcomingProgramsSectionTitle?: T;
-  pastProgramsSectionTitle?: T;
-  ctaSectionTitle?: T;
-  ctaSectionDescription?: T;
-  proposeProgramButtonText?: T;
-  becomeSpeakerButtonText?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "site-settings_select".
- */
-export interface SiteSettingsSelect<T extends boolean = true> {
-  navigation?:
-    | T
-    | {
-        label?: T;
-        url?: T;
-        id?: T;
-      };
-  contactInfo?:
-    | T
-    | {
-        phone?: T;
-        email?: T;
-        address?: T;
-        openingHours?: T;
-      };
-  footer?:
-    | T
-    | {
-        description?: T;
-        missionStatement?: T;
-      };
-  donationExternalUrl?: T;
-  socialLinks?:
-    | T
-    | {
-        facebook?: T;
-        instagram?: T;
-        linkedin?: T;
-        youtube?: T;
-      };
-  seo?:
-    | T
-    | {
-        metaTitle?: T;
-        metaDescription?: T;
-        ogImage?: T;
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "donationPage_select".
  */
 export interface DonationPageSelect<T extends boolean = true> {
@@ -1247,6 +1504,7 @@ export interface DonationPageSelect<T extends boolean = true> {
         title?: T;
         subtitle?: T;
         cta?: T;
+        image?: T;
       };
   impact?:
     | T
@@ -1259,6 +1517,13 @@ export interface DonationPageSelect<T extends boolean = true> {
               description?: T;
               id?: T;
             };
+      };
+  donateCard?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        notice?: T;
       };
   faq?:
     | T
@@ -1278,6 +1543,61 @@ export interface DonationPageSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         cta?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  navigation?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+        id?: T;
+      };
+  announcement?:
+    | T
+    | {
+        enabled?: T;
+        text?: T;
+        linkLabel?: T;
+        linkUrl?: T;
+      };
+  contactInfo?:
+    | T
+    | {
+        phone?: T;
+        email?: T;
+        address?: T;
+        mapUrl?: T;
+        openingHours?: T;
+      };
+  footer?:
+    | T
+    | {
+        description?: T;
+        missionStatement?: T;
+      };
+  socialLinks?:
+    | T
+    | {
+        facebook?: T;
+        instagram?: T;
+        linkedin?: T;
+        youtube?: T;
+      };
+  donationExternalUrl?: T;
+  seo?:
+    | T
+    | {
+        metaTitle?: T;
+        metaDescription?: T;
+        ogImage?: T;
       };
   updatedAt?: T;
   createdAt?: T;

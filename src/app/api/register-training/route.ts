@@ -1,39 +1,43 @@
 import { NextResponse } from 'next/server'
-import { sendMail } from '@/lib/mail'
+import { receiver, sendMail } from '@/lib/mail'
+import { clean, isEmail, readForm } from '@/lib/validation'
+
+const GENDERS: Record<string, string> = { male: 'Masculin', female: 'Féminin', other: 'Autre' }
 
 export async function POST(request: Request) {
-  try {
-    const { trainingName, name, email, phone, gender } = await request.json()
+  const body = await readForm(request)
+  if (!body) return NextResponse.json({ message: 'ok' })
 
-    if (!trainingName || !name || !email || !phone) {
-      return NextResponse.json(
-        { error: 'Missing required fields.' },
-        { status: 400 }
-      )
-    }
+  const trainingName = clean(body.trainingName, 200)
+  const domainName = clean(body.domainName, 200)
+  const name = clean(body.name, 120)
+  const phone = clean(body.phone, 40)
+  const gender = GENDERS[clean(body.gender, 10)] ?? 'Non spécifié'
+  const email = body.email
 
-    const emailContent = `
-      Nouvelle inscription à une formation:
-      Formation: ${trainingName}
-      Nom: ${name}
-      Email: ${email}
-      Téléphone: ${phone}
-      Genre: ${gender || 'Non spécifié'}
-    `
-
-    const result = await sendMail({
-      to: process.env.EMAIL_RECEIVER || 'contact@yl-association.org',
-      subject: `Nouvelle inscription: ${trainingName} - ${name}`,
-      text: emailContent,
-    })
-
-    if (result.success) {
-      return NextResponse.json({ message: 'Registration email sent successfully' })
-    } else {
-      return NextResponse.json({ error: 'Failed to send email' }, { status: 500 })
-    }
-  } catch (error) {
-    console.error('API Error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  if (!trainingName || !name || !phone || !isEmail(email)) {
+    return NextResponse.json({ error: 'Missing or invalid fields.' }, { status: 400 })
   }
+
+  const result = await sendMail({
+    to: receiver(),
+    replyTo: email,
+    subject: `Nouvelle inscription : ${trainingName} — ${name}`,
+    text: [
+      'Nouvelle inscription à une formation',
+      '',
+      `Formation : ${trainingName}`,
+      domainName ? `Domaine : ${domainName}` : '',
+      `Nom : ${name}`,
+      `Email : ${email}`,
+      `Téléphone : ${phone}`,
+      `Genre : ${gender}`,
+    ]
+      .filter(Boolean)
+      .join('\n'),
+  })
+
+  return result.success
+    ? NextResponse.json({ message: 'Registration email sent successfully' })
+    : NextResponse.json({ error: 'Failed to send email' }, { status: 502 })
 }

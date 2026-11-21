@@ -1,116 +1,86 @@
-import React from 'react'
+import { ArrowLeft } from 'lucide-react'
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Calendar, User, ArrowLeft } from 'lucide-react'
-import { getPayload } from 'payload'
-import config from '@payload-config'
-import { RichText } from '@payloadcms/richtext-lexical/react'
-import { getLocale } from '@/lib/i18n'
-import { Locale, translations } from '@/lib/translations'
 import { notFound } from 'next/navigation'
+import { BlogCard, readingTime } from '@/components/sections/BlogCard'
+import { CtaBanner } from '@/components/sections/CtaBanner'
+import { ButtonLink } from '@/components/ui/Button'
+import { HeroTitle } from '@/components/ui/HeroTitle'
+import { ReadingProgress } from '@/components/ui/ReadingProgress'
+import { Reveal, Stagger, StaggerItem } from '@/components/ui/Reveal'
+import { RichText } from '@/components/ui/RichText'
+import { getLocale, translations } from '@/lib/i18n'
+import { mediaAlt, mediaPosition, mediaUrl } from '@/lib/media'
+import { getBlogPosts, getPostBySlug } from '@/lib/queries'
+import { formatDate } from '@/lib/utils'
 
-export default async function BlogPostPage({ params }: any) {
-  const { slug } = await params
-  const locale = await getLocale() as Locale
-  const t = translations[locale]
-  
-  try {
-    const payload = await getPayload({ config })
-    const { docs: posts } = await payload.find({
-      collection: 'blog',
-      locale: locale as any,
-      where: {
-        slug: {
-          equals: slug,
-        },
-      },
-    })
+type Props = { params: Promise<{ slug: string }> }
 
-    if (posts.length === 0) {
-      notFound()
-    }
-
-    const post: any = posts[0]
-
-    return (
-      <article className="min-h-screen bg-white">
-        {/* Hero Banner */}
-        <div className="relative h-[40vh] md:h-[60vh] w-full">
-          <Image
-            src={post.featuredImage?.url || '/hero.jpg'}
-            alt={post.title}
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-black/40"></div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="container mx-auto px-4 text-center text-white">
-              <Link 
-                href="/blog"
-                className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors"
-              >
-                <ArrowLeft size={18} className="mr-2" />
-                <span>{locale === 'fr' ? 'Retour au blog' : 'Back to blog'}</span>
-              </Link>
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold max-w-4xl mx-auto leading-tight">
-                {post.title}
-              </h1>
-            </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="container mx-auto px-4 md:px-8 xl:px-32 py-16">
-          <div className="max-w-4xl mx-auto">
-            {/* Meta Info */}
-            <div className="flex flex-wrap items-center gap-6 text-gray-500 mb-12 pb-8 border-b border-gray-100">
-              <div className="flex items-center gap-2">
-                <Calendar size={18} className="text-[#0039F0]" />
-                <span>{new Date(post.publishedDate).toLocaleDateString(locale === 'fr' ? 'fr-FR' : 'en-US', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <User size={18} className="text-[#0039F0]" />
-                <span>{post.author}</span>
-              </div>
-            </div>
-
-            {/* Rich Text Content */}
-            <div className="prose prose-lg max-w-none prose-headings:text-gray-800 prose-p:text-gray-600 prose-a:text-[#0039F0] prose-img:rounded-2xl">
-              <RichText data={post.content} />
-            </div>
-
-            {/* Post Navigation / CTA */}
-            <div className="mt-20 p-8 md:p-12 bg-gray-50 rounded-3xl text-center">
-              <h3 className="text-2xl font-bold text-gray-800 mb-4">
-                {locale === 'fr' ? 'Intéressé par nos programmes ?' : 'Interested in our programs?'}
-              </h3>
-              <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
-                {locale === 'fr' 
-                  ? 'Découvrez comment nous pouvons vous aider à développer votre leadership et vos compétences.' 
-                  : 'Discover how we can help you develop your leadership and skills.'}
-              </p>
-              <Link 
-                href="/programmes"
-                className="bg-[#0039F0] hover:bg-[#0030cc] text-white px-10 py-4 rounded-full font-bold transition-all shadow-lg shadow-[#0039F0]/20"
-              >
-                {t.nav.programs}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </article>
-    )
-  } catch (error) {
-    console.error('Error loading blog post:', error)
-    return (
-      <div className="container mx-auto px-4 py-24 text-center">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">{t.common.errorTitle}</h1>
-        <p className="text-gray-600 mb-8">{t.common.tryAgainLater}</p>
-        <Link href="/blog" className="bg-[#0039F0] text-white px-8 py-3 rounded-full font-semibold">
-          {locale === 'fr' ? 'Retour au blog' : 'Back to blog'}
-        </Link>
-      </div>
-    )
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const post = await getPostBySlug((await params).slug)
+  if (!post) return {}
+  const og = mediaUrl(post.featuredImage)
+  return {
+    title: post.title,
+    description: post.excerpt ?? undefined,
+    openGraph: { type: 'article', publishedTime: post.publishedDate, images: og ? [{ url: og }] : undefined },
   }
+}
+
+export default async function BlogPostPage({ params }: Props) {
+  const locale = await getLocale()
+  const t = translations[locale]
+  const post = await getPostBySlug((await params).slug)
+  if (!post) notFound()
+  const more = (await getBlogPosts(4)).filter((p) => p.id !== post.id).slice(0, 3)
+  const image = mediaUrl(post.featuredImage)
+
+  return (
+    <article>
+      <ReadingProgress />
+      <header className="relative bg-ink-50 pt-40 pb-12 md:pt-48">
+        <div className="container-page max-w-4xl">
+          <Link href="/blog" className="group inline-flex items-center gap-2 text-sm font-semibold text-primary-600">
+            <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-1" /> {t.ui.backToBlog}
+          </Link>
+          <HeroTitle text={post.title} className="text-h1 mt-6" />
+          <Reveal delay={0.25} className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-500">
+            {post.author && <span className="font-semibold text-ink-900">{t.ui.by} {post.author}</span>}
+            <span aria-hidden>•</span>
+            <time dateTime={post.publishedDate}>{formatDate(post.publishedDate, locale)}</time>
+            <span aria-hidden>•</span>
+            <span>{readingTime(post)} {t.ui.minRead}</span>
+          </Reveal>
+        </div>
+      </header>
+      {image && (
+        <Reveal className="container-page -mb-4">
+          <div className="relative mx-auto aspect-[16/8] max-w-6xl overflow-hidden rounded-[2rem]">
+            <Image src={image} alt={mediaAlt(post.featuredImage, post.title)} fill priority sizes="(max-width: 1280px) 100vw, 1200px" className="object-cover" style={{ objectPosition: mediaPosition(post.featuredImage) }} />
+          </div>
+        </Reveal>
+      )}
+      <div className="container-page max-w-3xl py-16 md:py-24">
+        {post.excerpt && <p className="text-lead mb-10 border-l-4 border-primary-600 pl-6 font-medium text-ink-800">{post.excerpt}</p>}
+        <RichText data={post.content as never} />
+      </div>
+
+      {more.length > 0 && (
+        <section className="section-y bg-ink-50">
+          <div className="container-page">
+            <h2 className="text-h2 mb-10">{t.ui.latestNews}</h2>
+            <Stagger className="grid gap-6 md:grid-cols-3">
+              {more.map((p) => <StaggerItem key={p.id}><BlogCard post={p} locale={locale} /></StaggerItem>)}
+            </Stagger>
+          </div>
+        </section>
+      )}
+      <div className="pt-24">
+        <CtaBanner title={t.ui.interestedTitle} description={t.ui.interestedDescription}>
+          <ButtonLink href="/programmes" variant="white" size="lg" arrow>{t.nav.programs}</ButtonLink>
+        </CtaBanner>
+      </div>
+    </article>
+  )
 }

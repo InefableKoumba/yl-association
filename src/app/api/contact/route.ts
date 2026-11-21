@@ -1,38 +1,29 @@
 import { NextResponse } from 'next/server'
-import { sendMail } from '@/lib/mail'
+import { receiver, sendMail } from '@/lib/mail'
+import { clean, isEmail, readForm } from '@/lib/validation'
 
 export async function POST(request: Request) {
-  try {
-    const { name, email, subject, message } = await request.json()
+  const body = await readForm(request)
+  // Silently accept bot submissions so they don't retry
+  if (!body) return NextResponse.json({ message: 'ok' })
 
-    if (!name || !email || !message) {
-      return NextResponse.json(
-        { error: 'Please provide name, email, and message.' },
-        { status: 400 }
-      )
-    }
+  const name = clean(body.name, 120)
+  const email = body.email
+  const subject = clean(body.subject, 200)
+  const message = clean(body.message, 5000, true)
 
-    const emailContent = `
-      Nouveau message de contact:
-      Nom: ${name}
-      Email: ${email}
-      Sujet: ${subject || 'Aucun'}
-      Message: ${message}
-    `
-
-    const result = await sendMail({
-      to: process.env.EMAIL_RECEIVER || 'contact@yl-association.org',
-      subject: `Nouveau contact: ${subject || name}`,
-      text: emailContent,
-    })
-
-    if (result.success) {
-      return NextResponse.json({ message: 'Email sent successfully' })
-    } else {
-      return NextResponse.json({ error: 'Failed to send email' }, { status: 500 })
-    }
-  } catch (error) {
-    console.error('API Error:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  if (!name || !isEmail(email) || !message) {
+    return NextResponse.json({ error: 'Please provide a name, a valid email and a message.' }, { status: 400 })
   }
+
+  const result = await sendMail({
+    to: receiver(),
+    replyTo: email,
+    subject: `Nouveau contact : ${subject || name}`,
+    text: `Nouveau message de contact\n\nNom : ${name}\nEmail : ${email}\nSujet : ${subject || 'Aucun'}\n\n${message}`,
+  })
+
+  return result.success
+    ? NextResponse.json({ message: 'Email sent successfully' })
+    : NextResponse.json({ error: 'Failed to send email' }, { status: 502 })
 }

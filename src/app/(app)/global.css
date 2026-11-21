@@ -1,7 +1,290 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-@import "tailwindcss";
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
 
-* {
-  font-family: 'Montserrat', 'Poppins', sans-serif;
+/* ==========================================================================
+   Young Leaders — design system
+   Primary: #0039F0 (unchanged). Neutrals ("ink") are tinted towards it.
+   ========================================================================== */
+
+@theme {
+  /* Typography */
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-heading), var(--font-body), ui-sans-serif, system-ui, sans-serif;
+
+  /* Brand */
+  --color-primary-50: #eef2ff;
+  --color-primary-100: #dce4ff;
+  --color-primary-200: #b9c9ff;
+  --color-primary-300: #8ba4ff;
+  --color-primary-400: #5277fa;
+  --color-primary-500: #2050f5;
+  --color-primary-600: #0039f0;
+  --color-primary-700: #002fc7;
+  --color-primary-800: #00279e;
+  --color-primary-900: #031f78;
+  --color-primary-950: #04134a;
+  --color-primary: #0039f0;
+
+  /* Ink — blue-tinted neutrals */
+  --color-ink-50: #f6f7fa;
+  --color-ink-100: #eef0f5;
+  --color-ink-200: #e1e4ec;
+  --color-ink-300: #c3c7d6;
+  --color-ink-400: #9298b0;
+  --color-ink-500: #6b7190;
+  --color-ink-600: #4b5270;
+  --color-ink-700: #343b57;
+  --color-ink-800: #1c2340;
+  --color-ink-900: #0b1233;
+  --color-ink-950: #070b1f;
+
+  /* Accent — used sparingly for highlights */
+  --color-sun-300: #ffd780;
+  --color-sun-400: #ffc145;
+  --color-sun-500: #f5a70f;
+
+  --color-surface: #fbfbfd;
+
+  /* Radii */
+  --radius-card: 1.75rem;
+
+  /* Shadows */
+  --shadow-soft: 0 1px 2px rgb(11 18 51 / 0.04), 0 8px 24px -12px rgb(11 18 51 / 0.12);
+  --shadow-lift: 0 2px 4px rgb(11 18 51 / 0.04), 0 24px 48px -20px rgb(11 18 51 / 0.25);
+  --shadow-glow: 0 12px 40px -12px rgb(0 57 240 / 0.55);
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+
+  --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
+  --animate-kenburns: kenburns 18s ease-out both;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-spin-slow: spin 28s linear infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes kenburns {
+    from {
+      transform: scale(1.12);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: -200% 0;
+    }
+    to {
+      background-position: 200% 0;
+    }
+  }
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: smooth;
+    scroll-padding-top: 7rem;
+  }
+
+  body {
+    @apply bg-surface text-ink-700 font-sans;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    @apply font-display text-ink-900;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    @apply bg-primary-600 text-white;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-primary-600;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* ----- Layout ----- */
+@utility container-page {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 80rem;
+  padding-inline: 1.25rem;
+  @media (width >= 48rem) {
+    padding-inline: 2rem;
+  }
+  @media (width >= 80rem) {
+    padding-inline: 2.5rem;
+  }
+}
+
+@utility section-y {
+  padding-block: 5rem;
+  @media (width >= 48rem) {
+    padding-block: 7rem;
+  }
+}
+
+/* ----- Type scale ----- */
+@utility text-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.75rem, 6.5vw, 5.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.04em;
+}
+
+@utility text-h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.25rem, 4.6vw, 4rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+
+@utility text-h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.9rem, 3.4vw, 3rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+@utility text-h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.25rem, 1.6vw, 1.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+@utility text-lead {
+  font-size: clamp(1.05rem, 1.3vw, 1.25rem);
+  line-height: 1.65;
+}
+
+/* ----- Decorative backgrounds ----- */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(11 18 51 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(11 18 51 / 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+@utility bg-grid-light {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+
+@utility bg-dots {
+  background-image: radial-gradient(rgb(0 57 240 / 0.18) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+@utility mask-fade-b {
+  mask-image: linear-gradient(to bottom, black 40%, transparent);
+}
+
+@utility mask-fade-x {
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+
+@utility mask-radial {
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+}
+
+@utility skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-ink-100) 0%,
+    var(--color-ink-50) 50%,
+    var(--color-ink-100) 100%
+  );
+  background-size: 200% 100%;
+  animation: var(--animate-shimmer);
+}
+
+/* ----- Rich text (Lexical) ----- */
+/* Use together with `prose prose-lg max-w-none` */
+@utility prose-yl {
+  --tw-prose-body: var(--color-ink-600);
+  --tw-prose-headings: var(--color-ink-900);
+  --tw-prose-links: var(--color-primary-600);
+  --tw-prose-bold: var(--color-ink-900);
+  --tw-prose-bullets: var(--color-primary-600);
+  --tw-prose-counters: var(--color-primary-600);
+  --tw-prose-quotes: var(--color-ink-800);
+  --tw-prose-quote-borders: var(--color-primary-600);
+  --tw-prose-hr: var(--color-ink-200);
+
+  & :where(h2, h3, h4) {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+  }
+  & :where(img) {
+    border-radius: 1.25rem;
+  }
+  & :where(a) {
+    text-underline-offset: 3px;
+  }
+}
+
+/* ----- Form controls ----- */
+@utility field {
+  @apply w-full rounded-2xl border border-ink-200 bg-white px-4 py-3.5 text-ink-900 placeholder:text-ink-400 transition-[border-color,box-shadow] duration-200 outline-none;
+  &:hover {
+    @apply border-ink-300;
+  }
+  &:focus {
+    @apply border-primary-600 ring-4 ring-primary-600/12;
+  }
+}
+
+@utility field-label {
+  @apply mb-2 block text-sm font-medium text-ink-800;
 }

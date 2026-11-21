@@ -1,13 +1,32 @@
 import type { CollectionConfig } from 'payload'
+import { authenticated, publishedOrAuthenticated } from '../access'
+import { slugField } from '../fields/slug'
 
 export const Blog: CollectionConfig = {
   slug: 'blog',
+  labels: {
+    singular: 'Article',
+    plural: 'Blog',
+  },
   access: {
-    read: () => true,
+    read: publishedOrAuthenticated,
+    create: authenticated,
+    update: authenticated,
+    delete: authenticated,
   },
   admin: {
+    group: 'Contenu',
     useAsTitle: 'title',
-    defaultColumns: ['title', 'author', 'publishedDate', 'updatedAt'],
+    defaultColumns: ['title', 'author', 'publishedDate', '_status', 'updatedAt'],
+    description: 'Articles et actualités. Enregistrez un brouillon puis publiez quand il est prêt.',
+    listSearchableFields: ['title', 'slug', 'author'],
+  },
+  defaultSort: '-publishedDate',
+  versions: {
+    drafts: {
+      autosave: { interval: 1500 },
+    },
+    maxPerDoc: 25,
   },
   fields: [
     {
@@ -16,16 +35,6 @@ export const Blog: CollectionConfig = {
       required: true,
       label: 'Titre',
       localized: true,
-    },
-    {
-      name: 'slug',
-      type: 'text',
-      required: true,
-      unique: true,
-      label: 'Slug',
-      admin: {
-        description: 'URL unique de l\'article (ex: mon-article-passionnant)',
-      },
     },
     {
       name: 'featuredImage',
@@ -40,7 +49,7 @@ export const Blog: CollectionConfig = {
       label: 'Extrait / Résumé',
       localized: true,
       admin: {
-        description: 'Court texte affiché dans la liste des articles',
+        description: 'Court texte affiché dans la liste des articles et dans les moteurs de recherche.',
       },
     },
     {
@@ -50,18 +59,22 @@ export const Blog: CollectionConfig = {
       label: 'Contenu',
       localized: true,
     },
+    slugField('title'),
     {
       name: 'author',
       type: 'text',
       label: 'Auteur',
       defaultValue: 'Young Leaders',
+      admin: { position: 'sidebar' },
     },
     {
       name: 'publishedDate',
       type: 'date',
       label: 'Date de publication',
       required: true,
+      defaultValue: () => new Date().toISOString(),
       admin: {
+        position: 'sidebar',
         date: {
           pickerAppearance: 'dayOnly',
           displayFormat: 'd MMMM yyyy',

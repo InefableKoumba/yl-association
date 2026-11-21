@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(request: NextRequest) {
   try {
-    const { amount, phoneNumber, name, email, anonymous } = await request.json()
+    const { amount, phoneNumber, name, anonymous } = await request.json()
 
     // Validate the input
     if (!amount || parseInt(amount) < 100) {
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
           'X-Target-Environment': 'mtncongo',
           'Content-Type': 'application/json',
           'Cache-Control': 'no-cache',
-          'X-Reference-Id': process.env.COLLECTION_API_USER!,
+          'X-Reference-Id': crypto.randomUUID(),
         },
         body: JSON.stringify({
           amount,
@@ -64,6 +64,8 @@ export async function POST(request: NextRequest) {
       },
     )
 
+    // MTN answers 202 Accepted: the payment is only *requested* at this point;
+    // the payer still has to confirm it on their phone.
     if (!paymentResponse.ok) {
       console.error('Payment error:', await paymentResponse.text())
       return NextResponse.json({ error: 'Erreur lors du traitement du paiement' }, { status: 500 })
