@@ -29,6 +29,7 @@ import {
   TrainingsConfig,
 } from './globals/pages'
 import { SiteSettings } from './globals/site-settings'
+import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -150,6 +151,8 @@ export default buildConfig({
     },
     push: false,
     migrationDir: path.resolve(dirname, 'migrations'),
+    // Pending migrations run automatically when the production server starts
+    prodMigrations: migrations,
   }),
   sharp,
   plugins: [
